@@ -6,19 +6,23 @@
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "start": "wrangler dev",
-    "test": "vitest",
+    "test": "jest",
     "cf-typegen": "wrangler types",
     "db:generate": "npx drizzle-kit generate --dialect=postgresql --schema=./src/db/schema.ts",
     "db:migrate": "tsx ./src/db/migrate.ts"
   },
   "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-env": "^7.26.0",
+    "@babel/preset-typescript": "^7.26.0",
     "@cloudflare/vitest-pool-workers": "^0.5.2",
     "@cloudflare/workers-types": "^4.20250109.0",
+    "babel-jest": "^29.7.0",
     "dotenv": "^16.4.7",
     "drizzle-kit": "^0.30.2",
+    "jest": "^29.7.0",
     "tsx": "^4.19.2",
     "typescript": "^5.5.2",
-    "vitest": "2.1.8",
     "wrangler": "^3.60.3"
   },
   "dependencies": {
