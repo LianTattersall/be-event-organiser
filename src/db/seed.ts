@@ -2,10 +2,6 @@ import { neon } from "@neondatabase/serverless"
 import { config } from "dotenv"
 import { drizzle } from "drizzle-orm/neon-http"
 import { events, saved_events, sign_ups, users } from "./schema"
-import userData from "../db/data/testData/users-test.json"
-import eventData from "../db/data/testData/events-test.json"
-import signupData from "../db/data/testData/signups-test.json"
-import savedData from "../db/data/testData/saved-test.json"
 
 type User = {
     name:string,
@@ -55,4 +51,4 @@ async function seed(data: SeedData) {
     await db.insert(saved_events).values(data.saved)
 }
 
-seed({users: userData, events: eventData, signups:signupData , saved: savedData})
+export default seed
