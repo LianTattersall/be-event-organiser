@@ -48,6 +48,20 @@ describe('/users/:user_id', () => {
 			expect(data.message).toBe('404 - User not found');
 		});
 	});
+	describe('DELETE', () => {
+		test('204 - Empty response body upon successful deletion', async () => {
+			const response = await app.request('/users/2', { method: 'DELETE' });
+			expect(response.status).toBe(204);
+			const data = response.body;
+			expect(data).toBe(null);
+		});
+		test('404 - Responds with an error when the user does not exist', async () => {
+			const response = await app.request('/users/2004005', { method: 'DELETE' });
+			expect(response.status).toBe(404);
+			const data = await response.json();
+			expect(data.message).toBe('404 - User not found');
+		});
+	});
 });
 
 describe('/users', () => {

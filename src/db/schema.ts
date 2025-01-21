@@ -16,17 +16,17 @@ export const events = pgTable('events', {
 	description: text('description'),
 	organiser_id: integer('organiser_id')
 		.notNull()
-		.references(() => users.user_id),
+		.references(() => users.user_id, { onDelete: 'cascade' }),
 	signup_limit: integer('signup_limit'),
 	image_URL: text('image_URL'),
 });
 
 export const saved_events = pgTable('saved_events', {
-	event_id: integer('event_id').references(() => events.event_id),
-	user_id: integer('user_id').references(() => users.user_id),
+	event_id: integer('event_id').references(() => events.event_id, { onDelete: 'cascade' }),
+	user_id: integer('user_id').references(() => users.user_id, { onDelete: 'cascade' }),
 });
 
 export const sign_ups = pgTable('sign_ups', {
-	event_id: integer('event_id').references(() => events.event_id),
-	user_id: integer('user_id').references(() => users.user_id),
+	event_id: integer('event_id').references(() => events.event_id, { onDelete: 'cascade' }),
+	user_id: integer('user_id').references(() => users.user_id, { onDelete: 'cascade' }),
 });
