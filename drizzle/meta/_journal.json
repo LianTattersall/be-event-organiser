@@ -15,6 +15,20 @@
       "when": 1737423799187,
       "tag": "0001_wet_stature",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1737479312569,
+      "tag": "0002_broken_mattie_franklin",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1737479402630,
+      "tag": "0003_omniscient_blazing_skull",
+      "breakpoints": true
     }
   ]
 }

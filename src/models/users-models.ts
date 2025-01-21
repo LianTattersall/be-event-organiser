@@ -26,3 +26,12 @@ export const addUser = async (userDetails: User, connectionStr: string) => {
 	await db.insert(users).values({ name, email, admin });
 	return { name, email, admin };
 };
+
+export const removeUserById = async (user_id: number, connectionStr: string) => {
+	const neon_sql = neon(connectionStr);
+	const db = drizzle(neon_sql);
+	const data = await db.delete(users).where(eq(users.user_id, user_id)).returning();
+	if (data.length === 0) {
+		throw new HTTPException(404, { message: '404 - User not found' });
+	}
+};
