@@ -2,5 +2,11 @@
     "GET /users/:user_id": {
         "description": "Responds with an object containing the users user_id, name, email and admin status",
         "exampleResponse:": {"user_id":1,"email":"lian@gmail.com","name":"Lian","admin":true}
+    },
+    "POST /users": {
+        "description": "Posts a users details to the database", 
+        "requestFormat": {"email":"lian@gmail.com","name":"Lian","admin":true},
+        "exampleResponse": {"email":"lian@gmail.com","name":"Lian","admin":true}, 
+        "notes": "Request body can accept extra fields"
     }
 }
