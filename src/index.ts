@@ -21,6 +21,7 @@ app.route('/users', users_routes);
 app.route('/events', events_routes);
 
 app.onError((err, c) => {
+	console.log(err);
 	if (err instanceof HTTPException) {
 		return c.json({ message: err.message }, err.status);
 	} else if (err instanceof NeonDbError) {
@@ -28,7 +29,7 @@ app.onError((err, c) => {
 			return c.json({ message: '403 - Resource already exists' }, 403);
 		}
 	}
-	console.log(err);
+
 	return c.json({ message: '500 - Internal server error' }, 500);
 });
 
