@@ -9,7 +9,7 @@ import savedData from '../src/db/data/testData/saved-test.json';
 
 beforeAll(() => {
 	config({
-		path: '.dev.vars',
+		path: '.env.test',
 	});
 });
 
@@ -109,7 +109,7 @@ describe('/users', () => {
 });
 
 describe('/events', () => {
-	describe.only('GET', () => {
+	describe('GET', () => {
 		test('200 - responds with an array of event objects with default limit 10 and default page 1', async () => {
 			const response = await app.request('/events');
 			expect(response.status).toBe(200);
@@ -234,7 +234,6 @@ describe('/events', () => {
 			expect(response.status).toBe(200);
 
 			const data = await response.json();
-			console.log(data);
 
 			expect(data.events.length).toBeGreaterThan(0);
 			data.events.forEach((event) => {
