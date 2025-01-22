@@ -8,5 +8,9 @@
         "requestFormat": {"email":"lian@gmail.com","name":"Lian","admin":true},
         "exampleResponse": {"email":"lian@gmail.com","name":"Lian","admin":true}, 
         "notes": "Request body can accept extra fields"
+    },
+    "DELETE /users/:user_id": {
+        "description": "Deletes the user details specified by the user_id and any signups, saved events, or events linked to them"
+
     }
 }

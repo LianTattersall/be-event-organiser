@@ -1,4 +1,4 @@
-import { boolean, date, integer, pgTable, serial, text, time } from 'drizzle-orm/pg-core';
+import { boolean, date, integer, numeric, pgTable, serial, text, time } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
 	user_id: serial('user_id').primaryKey(),
@@ -19,6 +19,7 @@ export const events = pgTable('events', {
 		.references(() => users.user_id, { onDelete: 'cascade' }),
 	signup_limit: integer('signup_limit'),
 	image_URL: text('image_URL'),
+	price: numeric('price', { precision: 100, scale: 2 }),
 });
 
 export const saved_events = pgTable('saved_events', {

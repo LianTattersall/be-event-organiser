@@ -33,6 +33,7 @@ describe('/users/:user_id', () => {
 		test('200 - responds with user object containing user id name email and admin status', async () => {
 			const response = await app.request('/users/1');
 			expect(response.status).toBe(200);
+
 			const data = await response.json();
 			expect(data.user).toEqual({
 				name: expect.any(String),
@@ -103,6 +104,144 @@ describe('/users', () => {
 			expect(response.status).toBe(201);
 			const data = await response.json();
 			expect(data.user).toEqual({ name: 'Toffee', email: 'toffee@gmail.com', admin: false });
+		});
+	});
+});
+
+describe('/events', () => {
+	describe.only('GET', () => {
+		test('200 - responds with an array of event objects with default limit 10 and default page 1', async () => {
+			const response = await app.request('/events');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.events.length).toBe(10);
+			expect(data.events[0].event_id).toBe(1);
+
+			data.events.forEach((event, index) => {
+				expect(event).toEqual({
+					event_id: index + 1,
+					event_name: expect.any(String),
+					event_date: expect.any(String),
+					start_time: expect.any(String),
+					end_time: expect.any(String),
+					image_URL: expect.any(String),
+					signup_limit: expect.any(Number),
+					signups: expect.any(Number),
+					price: expect.any(String),
+				});
+			});
+		});
+		test('200 - limit query determines the number of events returned and page query determines which page', async () => {
+			const response = await app.request('/events?limit=5&p=2');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.events.length).toBe(5);
+			expect(data.events[0].event_id).toBe(6);
+
+			data.events.forEach((event) => {
+				expect(event).toEqual({
+					event_id: expect.any(Number),
+					event_name: expect.any(String),
+					event_date: expect.any(String),
+					start_time: expect.any(String),
+					end_time: expect.any(String),
+					image_URL: expect.any(String),
+					signup_limit: expect.any(Number),
+					signups: expect.any(Number),
+					price: expect.any(String),
+				});
+			});
+		});
+		test('400 - responds with error when limit and p are not numbers', async () => {
+			const response = await app.request('/events?limit=hi');
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid data type for query');
+		});
+		test('200 - can sort by date', async () => {
+			const response = await app.request('/events?sortby=date&orderby=desc');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.events.length).toBe(10);
+			const timeStamps = data.events.map((event) => new Date(event.event_date).getTime());
+			expect(timeStamps).toBeSorted({ descending: true });
+		});
+		test('200 - can sort by price', async () => {
+			const response = await app.request('/events?sortby=price');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.events.length).toBe(10);
+			const prices = data.events.map((event) => Number(event.price));
+			expect(prices).toBeSorted();
+		});
+		test('400 - responds with an error when order by is not asc or desc', async () => {
+			const response = await app.request('/events?sortby=date&orderby=hello');
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+
+			expect(data.message).toBe('400 - Invalid query for orderby');
+		});
+		test('400 - responds with an error when sortby query is invalid', async () => {
+			const response = await app.request('/events?sortby=hello&orderby=desc');
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid query for sortby');
+		});
+		test('200 - type query filters available events', async () => {
+			const response = await app.request('/events?type=current');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.events.length).toBeGreaterThan(0);
+			data.events.forEach((event) => {
+				expect(new Date(event.event_date).getTime()).toBeGreaterThan(new Date().getTime());
+				expect(event.signup_limit).toBeGreaterThan(event.signups);
+			});
+		});
+		test('400 - responds with an error when type query is invalid', async () => {
+			const response = await app.request('/events?type=past');
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid query for type');
+		});
+		test('200 - searchTerm query filters results', async () => {
+			const response = await app.request('/events?searchTerm=picnic+park');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.events[0]).toEqual({
+				price: '12.20',
+				event_id: 2,
+				event_name: 'Picnic in Hyde Park',
+				event_date: '2025-07-01',
+				start_time: '12:00:00',
+				end_time: '18:00:00',
+				signup_limit: 10,
+				signups: 5,
+				image_URL: 'https://media.timeout.com/images/106207035/750/422/image.jpg',
+			});
+		});
+		test('200 - can apply multiple queries', async () => {
+			const response = await app.request('/events?searchTerm=secret+santa&type=current&sortby=date&orderby=desc');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			console.log(data);
+
+			expect(data.events.length).toBeGreaterThan(0);
+			data.events.forEach((event) => {
+				expect(event.event_name).toBe('Secret Santa Exchange');
+				expect(new Date(event.event_date).getTime()).toBeGreaterThan(new Date().getTime());
+				expect(event.signup_limit).toBeGreaterThan(event.signups);
+			});
 		});
 	});
 });

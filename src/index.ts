@@ -4,6 +4,7 @@ import users_routes from './routes/users-routes';
 import { HTTPException } from 'hono/http-exception';
 import { NeonDbError } from '@neondatabase/serverless';
 import { ContentlessStatusCode } from 'hono/utils/http-status';
+import events_routes from './routes/events-routes';
 
 export type Env = {
 	DATABASE_URL: string;
@@ -17,6 +18,8 @@ app.get('/', (c) => {
 
 app.route('/users', users_routes);
 
+app.route('/events', events_routes);
+
 app.onError((err, c) => {
 	if (err instanceof HTTPException) {
 		return c.json({ message: err.message }, err.status);
@@ -26,7 +29,6 @@ app.onError((err, c) => {
 		}
 	}
 	console.log(err);
-
 	return c.json({ message: '500 - Internal server error' }, 500);
 });
 
