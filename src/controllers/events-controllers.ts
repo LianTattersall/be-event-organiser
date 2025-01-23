@@ -1,5 +1,5 @@
 import { Context } from 'hono';
-import { fetchEventById, fetchEvents, removeEventById } from '../models/events-models';
+import { addEvent, fetchEventById, fetchEvents, removeEventById } from '../models/events-models';
 import { connectionStr } from './utils';
 import { Env } from '../index';
 
@@ -25,4 +25,10 @@ export const deleteEventById = async (c: Context<{ Bindings: Env }>) => {
 	const event_id = c.req.param('event_id');
 	await removeEventById(connectionStr(c)!, Number(event_id));
 	return c.body(null, 204);
+};
+
+export const postEvent = async (c: Context<{ Bindings: Env }>) => {
+	const eventToPost = await c.req.json();
+	const event = await addEvent(connectionStr(c)!, eventToPost);
+	return c.json({ event }, 201);
 };

@@ -243,6 +243,145 @@ describe('/events', () => {
 			});
 		});
 	});
+	describe('POST', () => {
+		test('201 - Responds with the event that has successfully been added to the db', async () => {
+			const postInfo = {
+				event_name: 'Trip to Science Museum',
+				event_date: '2025-04-23',
+				start_time: '09:00:00',
+				end_time: '14:00:00',
+				price: '0.00',
+				image_URL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX7w2mn_cGck-it4SGUHPokp66b2yTB58DGQ&s',
+				signup_limit: 30,
+				description: "Visit one of London's most exciting museums.",
+				organiser_id: 2,
+			};
+			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(201);
+
+			const data = await response.json();
+			expect(data.event).toEqual({ ...postInfo, event_id: expect.any(Number) });
+		});
+		test('400 - responds with an error when date is in incorrect format', async () => {
+			const postInfo = {
+				event_name: 'Science Museum Visit',
+				event_date: '2',
+				start_time: '09:00:00',
+				end_time: '14:00:00',
+				price: '0.00',
+				image_URL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX7w2mn_cGck-it4SGUHPokp66b2yTB58DGQ&s',
+				signup_limit: 30,
+				description: "Visit one of London's most exciting museums.",
+				organiser_id: 2,
+			};
+			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid syntax for date/time');
+		});
+		test('400 - responds with an error when the time is in the incorrect format', async () => {
+			const postInfo = {
+				event_name: 'Science Museum Visit',
+				event_date: '2023-09-2',
+				start_time: '09:0',
+				end_time: '1hi0',
+				image_URL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX7w2mn_cGck-it4SGUHPokp66b2yTB58DGQ&s',
+				signup_limit: 30,
+				description: "Visit one of London's most exciting museums.",
+				organiser_id: 2,
+			};
+			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid syntax for date/time');
+		});
+		test('400 - responds with an error when there are missing fields that are required', async () => {
+			const postInfo = {
+				end_time: '01:00:00',
+				price: '0.00',
+				image_URL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX7w2mn_cGck-it4SGUHPokp66b2yTB58DGQ&s',
+				signup_limit: 30,
+				description: "Visit one of London's most exciting museums.",
+				organiser_id: 2,
+			};
+			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Missing information on request body');
+		});
+		test('400 - responds with an error for invalid data types', async () => {
+			const postInfo = {
+				event_name: 'Trip to Science Museum',
+				event_date: '2025-04-23',
+				start_time: '09:00:00',
+				end_time: '14:00:00',
+				price: '0.00',
+				image_URL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX7w2mn_cGck-it4SGUHPokp66b2yTB58DGQ&s',
+				signup_limit: 'thirty',
+				description: "Visit one of London's most exciting museums.",
+				organiser_id: 2,
+			};
+
+			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid data type on request body');
+		});
+		test('201 - Ignores any extra fields on the requestb body', async () => {
+			const postInfo = {
+				event_name: 'Trip to Science Museum',
+				event_date: '2025-04-23',
+				start_time: '09:00:00',
+				end_time: '14:00:00',
+				price: '0.00',
+				image_URL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX7w2mn_cGck-it4SGUHPokp66b2yTB58DGQ&s',
+				signup_limit: 30,
+				description: "Visit one of London's most exciting museums.",
+				organiser_id: 2,
+				reviews: ['5 stars'],
+			};
+
+			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(201);
+
+			const data = await response.json();
+			expect(data.event).toEqual({
+				event_name: 'Trip to Science Museum',
+				event_date: '2025-04-23',
+				start_time: '09:00:00',
+				end_time: '14:00:00',
+				price: '0.00',
+				image_URL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX7w2mn_cGck-it4SGUHPokp66b2yTB58DGQ&s',
+				signup_limit: 30,
+				description: "Visit one of London's most exciting museums.",
+				organiser_id: 2,
+				event_id: expect.any(Number),
+			});
+		});
+		test('400 - responds with error when price has incorrect format', async () => {
+			const postInfo = {
+				event_name: 'Trip to Science Museum',
+				event_date: '2025-04-23',
+				start_time: '09:00:00',
+				end_time: '14:00:00',
+				price: '6666.66666666hj',
+				image_URL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX7w2mn_cGck-it4SGUHPokp66b2yTB58DGQ&s',
+				signup_limit: 30,
+				description: "Visit one of London's most exciting museums.",
+				organiser_id: 2,
+			};
+
+			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid data type on request body');
+		});
+	});
 });
 
 describe('/events/:event_id', () => {
