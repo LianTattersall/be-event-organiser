@@ -9,11 +9,11 @@ export const users = pgTable('users', {
 
 export const events = pgTable('events', {
 	event_id: serial('event_id').primaryKey(),
-	event_name: text('event_name'),
-	event_date: date('event_date'),
-	start_time: time('start_time'),
+	event_name: text('event_name').notNull(),
+	event_date: date('event_date').notNull(),
+	start_time: time('start_time').notNull(),
 	end_time: time('end_time'),
-	description: text('description'),
+	description: text('description').notNull(),
 	organiser_id: integer('organiser_id')
 		.notNull()
 		.references(() => users.user_id, { onDelete: 'cascade' }),
