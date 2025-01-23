@@ -12,5 +12,41 @@
     "DELETE /users/:user_id": {
         "description": "Deletes the user details specified by the user_id and any signups, saved events, or events linked to them"
 
+    },
+    "GET /events":{
+        "description": "Responds with an array of event objects",
+        "queries": ["p - page number" , "limit - number of events in array", "type - can be 'current' or 'all'. 'current' filters out past events and events that have reached the signup limit" , "searchTerm - filters events by a searchTerm", "sortby - Can be date, price, or id", "orderby - Can be asc or desc"],
+        "exampleResponse": [{
+            "event_id": 1,
+            "event_name": "London Marathon",
+            "event_date": "2025-04-01",
+            "start_time": "10:00:00",
+            "end_time": "18:00:00",
+            "image_URL": "https://www.londontravelwatch.org.uk/wp-content/uploads/2023/04/London-Marathon-cropped.png",
+            "signup_limit": 3000,
+            "price": "10.00",
+            "signups": 2
+          }]
+    },
+    "GET /events/:event_id": {
+        "description": "Responds with all the event info for the event with the corresponding ID",
+        "exampleResponse": {
+            "event_id": 3,
+            "event_name": "Visit to NASA",
+            "event_date": "2025-03-01",
+            "start_time": "08:00:00",
+            "end_time": "17:00:00",
+            "description": "Get an exclusive tour of NASA",
+            "organiser_id": 1,
+            "signup_limit": 3,
+            "image_URL": "https://d1o72l87sylvqg.cloudfront.net/blue-origin/webheader_bluemoon.png",
+            "price": "9.00",
+            "signups": 3,
+            "organiser_name": "Lian",
+            "organiser_email": "lian@gmail.com"
+          }
+    },
+    "DELETE /events/:event_id": {
+        "description": "Deletes the event specified by the ID"
     }
 }

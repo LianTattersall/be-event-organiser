@@ -28,6 +28,15 @@ app.onError((err, c) => {
 		if (err.code == '23505') {
 			return c.json({ message: '403 - Resource already exists' }, 403);
 		}
+		if (err.code == '22007') {
+			return c.json({ message: '400 - Invalid syntax for date/time' }, 400);
+		}
+		if (err.code == '23502') {
+			return c.json({ message: '400 - Missing information on request body' }, 400);
+		}
+		if (err.code == '22P02') {
+			return c.json({ message: '400 - Invalid data type on request body' }, 400);
+		}
 	}
 	console.log(err);
 	return c.json({ message: '500 - Internal server error' }, 500);

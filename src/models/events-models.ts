@@ -102,3 +102,26 @@ export const removeEventById = async (connectionStr: string, event_id: number) =
 		throw new HTTPException(404, { message: '404 - Event not found' });
 	}
 };
+
+interface Event {
+	event_name: string;
+	event_date: string;
+	start_time: string;
+	end_time: string;
+	price: string;
+	image_URL: string;
+	signup_limit: number;
+	description: string;
+	organiser_id: number;
+}
+
+export const addEvent = async (connectionStr: string, eventToPost: Event) => {
+	const neon_sql = neon(connectionStr);
+	const db = drizzle(neon_sql);
+	const { event_name, event_date, start_time, end_time, price, image_URL, signup_limit, description, organiser_id } = eventToPost;
+	const posted = await db
+		.insert(events)
+		.values([{ event_name, event_date, start_time, end_time, price, image_URL, signup_limit, description, organiser_id }])
+		.returning();
+	return posted[0];
+};
