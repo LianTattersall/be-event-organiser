@@ -1,9 +1,10 @@
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
-import { events, sign_ups } from '../db/schema';
+import { events, sign_ups, users } from '../db/schema';
 import { asc, desc, eq, sql } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 import { currentEvents, currentEventsAndSearch, searchResults } from './query-builder';
+import { connectionStr } from '../controllers/utils';
 
 export const fetchEvents = async (
 	connectionStr: string,
@@ -66,4 +67,38 @@ export const fetchEvents = async (
 		return searchResults(events_data.$dynamic(), searchTerm);
 	}
 	return events_data;
+};
+
+export const fetchEventById = async (connectionStr: string, event_id: number) => {
+	const neon_sql = neon(connectionStr);
+	const db = drizzle(neon_sql);
+
+	const event_data = await db.select().from(events).where(eq(events.event_id, event_id));
+
+	if (event_data.length === 0) {
+		throw new HTTPException(404, { message: '404 - Event not found' });
+	}
+
+	const signups = await db
+		.select({ signups: sql`CAST(COALESCE(COUNT(${sign_ups.user_id}), 0) AS INT)` })
+		.from(events)
+		.leftJoin(sign_ups, eq(events.event_id, sign_ups.event_id))
+		.where(eq(events.event_id, event_id));
+	const organiser_data = await db
+		.select({ organiser_name: users.name, organiser_email: users.email })
+		.from(events)
+		.leftJoin(users, eq(users.user_id, events.organiser_id))
+		.where(eq(events.event_id, event_id));
+	return { ...event_data[0], ...signups[0], ...organiser_data[0] };
+};
+
+export const removeEventById = async (connectionStr: string, event_id: number) => {
+	const neon_sql = neon(connectionStr);
+	const db = drizzle(neon_sql);
+
+	const deleted_event = await db.delete(events).where(eq(events.event_id, event_id)).returning();
+
+	if (deleted_event.length === 0) {
+		throw new HTTPException(404, { message: '404 - Event not found' });
+	}
 };

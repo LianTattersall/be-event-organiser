@@ -7,11 +7,11 @@ import eventData from '../src/db/data/testData/events-test.json';
 import signupData from '../src/db/data/testData/signups-test.json';
 import savedData from '../src/db/data/testData/saved-test.json';
 
-beforeAll(() => {
+/*beforeAll(() => {
 	config({
-		path: '.env.test',
+		path: '.dev.vars',
 	});
-});
+});*/
 
 beforeEach(async () => {
 	await seed({ users: userData, events: eventData, signups: signupData, saved: savedData });
@@ -241,6 +241,55 @@ describe('/events', () => {
 				expect(new Date(event.event_date).getTime()).toBeGreaterThan(new Date().getTime());
 				expect(event.signup_limit).toBeGreaterThan(event.signups);
 			});
+		});
+	});
+});
+
+describe('/events/:event_id', () => {
+	describe('GET', () => {
+		test('200 - responds with all the information of the event with the corresponding event_id', async () => {
+			const response = await app.request('/events/1');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.event).toEqual({
+				price: '10.00',
+				event_id: 1,
+				event_name: 'London Marathon',
+				event_date: '2025-04-01',
+				start_time: '10:00:00',
+				end_time: '18:00:00',
+				description: '26.2 miles of London',
+				organiser_id: 1,
+				signup_limit: 3000,
+				image_URL: 'https://www.londontravelwatch.org.uk/wp-content/uploads/2023/04/London-Marathon-cropped.png',
+				signups: 2,
+				organiser_name: 'Lian',
+				organiser_email: 'lian@gmail.com',
+			});
+		});
+		test('404 - responds with an error when the event does not exist', async () => {
+			const response = await app.request('/events/23456700');
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toBe('404 - Event not found');
+		});
+	});
+	describe('DELETE', () => {
+		test('204 - no response upon successful deletion of event', async () => {
+			const response = await app.request('/events/3', { method: 'DELETE' });
+			expect(response.status).toBe(204);
+
+			const data = response.body;
+			expect(data).toBe(null);
+		});
+		test('404 - responds with an error when the event does not exist', async () => {
+			const response = await app.request('/events/3333333', { method: 'DELETE' });
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toBe('404 - Event not found');
 		});
 	});
 });

@@ -1,8 +1,7 @@
 import { Context } from 'hono';
-import { fetchEvents } from '../models/events-models';
+import { fetchEventById, fetchEvents, removeEventById } from '../models/events-models';
 import { connectionStr } from './utils';
 import { Env } from '../index';
-import { HTTPException } from 'hono/http-exception';
 
 export const getEvents = async (c: Context<{ Bindings: Env }>) => {
 	const limit = c.req.query('limit') ? Number(c.req.query('limit')) : 10;
@@ -14,4 +13,16 @@ export const getEvents = async (c: Context<{ Bindings: Env }>) => {
 
 	const events = await fetchEvents(connectionStr(c)!, limit, p, sortby, orderby, type, searchTerm);
 	return c.json({ events });
+};
+
+export const getEventById = async (c: Context<{ Bindings: Env }>) => {
+	const event_id = c.req.param('event_id');
+	const event = await fetchEventById(connectionStr(c)!, Number(event_id));
+	return c.json({ event });
+};
+
+export const deleteEventById = async (c: Context<{ Bindings: Env }>) => {
+	const event_id = c.req.param('event_id');
+	await removeEventById(connectionStr(c)!, Number(event_id));
+	return c.body(null, 204);
 };
