@@ -1,6 +1,6 @@
-import { and, gt, sql } from 'drizzle-orm';
+import { and, eq, gt, sql } from 'drizzle-orm';
 import { PgSelect } from 'drizzle-orm/pg-core';
-import { events } from '../db/schema';
+import { events, sign_ups, users } from '../db/schema';
 
 export function currentEvents<T extends PgSelect>(qb: T) {
 	const date = new Date();
@@ -23,4 +23,10 @@ export function currentEventsAndSearch<T extends PgSelect>(qb: T, searchTerm: st
 				sql`to_tsvector('english', ${events.event_name}) @@ plainto_tsquery('english', ${searchTerm})`
 			)
 		);
+}
+
+export function signedUpUserSearch<T extends PgSelect>(qb: T, searchTerm: string, event_id: number) {
+	return qb.where(
+		and(eq(sign_ups.event_id, event_id), sql`to_tsvector('english', ${users.name}) @@ plainto_tsquery('english', ${searchTerm})`)
+	);
 }

@@ -1,5 +1,5 @@
 import { Context } from 'hono';
-import { addEvent, fetchEventById, fetchEvents, removeEventById } from '../models/events-models';
+import { addEvent, fetchEventById, fetchEvents, fetchEventSignups, removeEventById } from '../models/events-models';
 import { connectionStr } from './utils';
 import { Env } from '../index';
 
@@ -31,4 +31,14 @@ export const postEvent = async (c: Context<{ Bindings: Env }>) => {
 	const eventToPost = await c.req.json();
 	const event = await addEvent(connectionStr(c)!, eventToPost);
 	return c.json({ event }, 201);
+};
+
+export const getEventSignups = async (c: Context<{ Bindings: Env }>) => {
+	const event_id = c.req.param('event_id');
+	const searchTerm = c.req.query('searchTerm') || '';
+	const limit = c.req.query('limit') ? Number(c.req.query('limit')) : 10;
+	const p = c.req.query('p') ? Number(c.req.query('p')) : 1;
+
+	const signedUpUsers = await fetchEventSignups(connectionStr(c)!, Number(event_id), searchTerm, Number(p), Number(limit));
+	return c.json({ users: signedUpUsers });
 };

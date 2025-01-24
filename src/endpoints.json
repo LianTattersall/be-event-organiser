@@ -48,5 +48,40 @@
     },
     "DELETE /events/:event_id": {
         "description": "Deletes the event specified by the ID"
+    },
+    "POST /events": {
+        "description": "Adds an event to the events table in the db", 
+        "requestFormat": {
+            "price": 9.00,
+            "event_name": "Visit to NASA",
+            "event_date": "2025-03-01",
+            "start_time": "08:00:00",
+            "end_time": "17:00:00",
+            "description": "Get an exclusive tour of NASA",
+            "organiser_id": 1,
+            "signup_limit": 3,
+            "image_URL": "https://d1o72l87sylvqg.cloudfront.net/blue-origin/webheader_bluemoon.png"
+        },
+        "exampleResponse" : {
+            "event_id": 3,
+            "price": 9.00,
+            "event_name": "Visit to NASA",
+            "event_date": "2025-03-01",
+            "start_time": "08:00:00",
+            "end_time": "17:00:00",
+            "description": "Get an exclusive tour of NASA",
+            "organiser_id": 1,
+            "signup_limit": 3,
+            "image_URL": "https://d1o72l87sylvqg.cloudfront.net/blue-origin/webheader_bluemoon.png"
+        },
+        "notes": "price, image_URL, end_time, signup_limit can be null. Request body ignores any additional fields."
+    },
+    "GET /events/:event_id/users": {
+        "description": "Responds with the users that have signed up to that event",
+        "queries": ["p - page number", "limit - number of events in array" , "searchTerm - filters events by a searchTerm"],
+        "exampleResponse":  [
+            { "name": "Lian", "email": "lian@gmail.com" },
+            { "name": "Hanna", "email": "Hanna@gmail.com" }
+          ]
     }
 }
