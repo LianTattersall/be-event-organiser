@@ -432,3 +432,123 @@ describe('/events/:event_id', () => {
 		});
 	});
 });
+
+describe('/events/:event_id/users', () => {
+	describe('GET', () => {
+		test('200 - responds with the users that have signed up to this event', async () => {
+			const response = await app.request('/events/1/users');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.users.length).toBe(2);
+			data.users.forEach((user) => {
+				expect(user).toEqual({
+					name: expect.any(String),
+					email: expect.any(String),
+				});
+			});
+		});
+		test('200 - responds with an empty array when there are no signups', async () => {
+			const response = await app.request('/events/7/users');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.users.length).toBe(0);
+		});
+		test('400 - responds with an error when the event does not exist', async () => {
+			const response = await app.request('/events/704040404/users');
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toBe('404 - Event not found');
+		});
+		test('200 - Can include a search term', async () => {
+			const response = await app.request('/events/1/users?searchTerm=Hanna');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.users.length).toBe(1);
+			expect(data.users[0]).toEqual({ name: 'Hanna', email: 'Hanna@gmail.com' });
+		});
+		test('200 - can add p and limit queries', async () => {
+			const response = await app.request('/events/2/users?limit=2&p=2');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.users.length).toBe(2);
+		});
+		test('400 - responds with an error when limit or p are not numbers', async () => {
+			const response = await app.request('/events/2/users?limit=hello&p=2');
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid data type for query');
+		});
+	});
+});
+
+describe('/users/:user_id/signups', () => {
+	describe('GET', () => {
+		test('200 - responds with the events that the specified user has signed up to', async () => {
+			const response = await app.request('/users/2/signups');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+
+			expect(data.signups.length).toBe(3);
+			data.signups.forEach((event) => {
+				expect(event).toEqual({
+					event_id: expect.any(Number),
+					event_name: expect.any(String),
+					event_date: expect.any(String),
+					start_time: expect.any(String),
+					end_time: expect.any(String),
+					image_URL: expect.any(String),
+					signup_limit: expect.any(Number),
+					price: expect.any(String),
+				});
+			});
+		});
+		test('200 - can add p  and limit queries', async () => {
+			const response = await app.request('/users/2/signups?limit=1&p=2');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+
+			expect(data.signups.length).toBe(1);
+			data.signups.forEach((event) => {
+				expect(event).toEqual({
+					event_id: expect.any(Number),
+					event_name: expect.any(String),
+					event_date: expect.any(String),
+					start_time: expect.any(String),
+					end_time: expect.any(String),
+					image_URL: expect.any(String),
+					signup_limit: expect.any(Number),
+					price: expect.any(String),
+				});
+			});
+		});
+		test('400 - responds with an error when the p or limit queries are invalid', async () => {
+			const response = await app.request('/users/2/signups?limit=hello&p=2');
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid data type for query');
+		});
+		test('404 - responds with an error when the user does not exist', async () => {
+			const response = await app.request('/users/2000000/signups?limit=2&p=2');
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toBe('404 - User not found');
+		});
+		test('200 responds with an empty array if the user does not have any signups', async () => {
+			const response = await app.request('/users/6/signups');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.signups.length).toBe(0);
+		});
+	});
+});
