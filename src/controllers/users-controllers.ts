@@ -1,6 +1,14 @@
 import { Context, Next } from 'hono';
 import { Env } from '../index';
-import { addUser, fetchSignupsByUserId, fetchUserById, removeUserById } from '../models/users-models';
+import {
+	addSavedByUserId,
+	addSignupByUserId,
+	addUser,
+	fetchSavedByUserId,
+	fetchSignupsByUserId,
+	fetchUserById,
+	removeUserById,
+} from '../models/users-models';
 import { connectionStr } from './utils';
 import { HTTPException } from 'hono/http-exception';
 
@@ -29,4 +37,27 @@ export const getSignupsByUserId = async (c: Context<{ Bindings: Env }>) => {
 
 	const signups = await fetchSignupsByUserId(connectionStr(c)!, Number(user_id), Number(limit), Number(p));
 	return c.json({ signups });
+};
+
+export const postSignupByUserId = async (c: Context<{ Bindings: Env }>) => {
+	const user_id = c.req.param('user_id');
+	const { event_id } = await c.req.json();
+	const signup = await addSignupByUserId(connectionStr(c)!, Number(user_id), event_id);
+	return c.json({ signup }, 201);
+};
+
+export const getSavedByUserId = async (c: Context<{ Bindings: Env }>) => {
+	const user_id = c.req.param('user_id');
+	const limit = c.req.query('limit') ? Number(c.req.query('limit')) : 10;
+	const p = c.req.query('p') ? Number(c.req.query('p')) : 1;
+
+	const saved = await fetchSavedByUserId(connectionStr(c)!, Number(user_id), Number(limit), Number(p));
+	return c.json({ saved });
+};
+
+export const postSavedByUserId = async (c: Context<{ Bindings: Env }>) => {
+	const user_id = c.req.param('user_id');
+	const { event_id } = await c.req.json();
+	const saved = await addSavedByUserId(connectionStr(c)!, Number(user_id), event_id);
+	return c.json({ saved }, 201);
 };

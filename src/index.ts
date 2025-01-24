@@ -35,7 +35,10 @@ app.onError((err, c) => {
 			return c.json({ message: '400 - Missing information on request body' }, 400);
 		}
 		if (err.code == '22P02') {
-			return c.json({ message: '400 - Invalid data type on request body' }, 400);
+			return c.json({ message: '400 - Invalid data type' }, 400);
+		}
+		if (err.code == '23503') {
+			return c.json({ message: '404 - Resource not found' }, 404);
 		}
 	}
 	console.log(err);
