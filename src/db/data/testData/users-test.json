@@ -28,5 +28,11 @@
         "email": "Kerry@gmail.com",
         "admin": false,
         "user_id": 5
+    },
+    {
+        "name": "Keith", 
+        "email": "Keith@gmail.com",
+        "admin": false,
+        "user_id": 6
     }
 ]

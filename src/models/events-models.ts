@@ -3,8 +3,7 @@ import { drizzle } from 'drizzle-orm/neon-http';
 import { events, sign_ups, users } from '../db/schema';
 import { asc, desc, eq, sql } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
-import { currentEvents, currentEventsAndSearch, searchResults } from './query-builder';
-import { connectionStr } from '../controllers/utils';
+import { currentEvents, currentEventsAndSearch, searchResults, signedUpUserSearch } from './query-builder';
 
 export const fetchEvents = async (
 	connectionStr: string,
@@ -97,7 +96,6 @@ export const removeEventById = async (connectionStr: string, event_id: number) =
 	const db = drizzle(neon_sql);
 
 	const deleted_event = await db.delete(events).where(eq(events.event_id, event_id)).returning();
-
 	if (deleted_event.length === 0) {
 		throw new HTTPException(404, { message: '404 - Event not found' });
 	}
@@ -124,4 +122,31 @@ export const addEvent = async (connectionStr: string, eventToPost: Event) => {
 		.values([{ event_name, event_date, start_time, end_time, price, image_URL, signup_limit, description, organiser_id }])
 		.returning();
 	return posted[0];
+};
+
+export const fetchEventSignups = async (connectionStr: string, event_id: number, searchTerm: string, p: number, limit: number) => {
+	const neon_sql = neon(connectionStr);
+	const db = drizzle(neon_sql);
+
+	if (!limit || !p) {
+		throw new HTTPException(400, { message: '400 - Invalid data type for query' });
+	}
+
+	const event = await db.select().from(events).where(eq(events.event_id, event_id));
+	if (event.length === 0) {
+		throw new HTTPException(404, { message: '404 - Event not found' });
+	}
+
+	const signedUpUsers = db
+		.select({ name: users.name, email: users.email })
+		.from(sign_ups)
+		.innerJoin(users, eq(sign_ups.user_id, users.user_id))
+		.limit(limit)
+		.offset((p - 1) * limit)
+		.$dynamic();
+
+	if (searchTerm) {
+		return signedUpUserSearch(signedUpUsers, searchTerm, event_id);
+	}
+	return signedUpUsers.where(eq(sign_ups.event_id, event_id));
 };
