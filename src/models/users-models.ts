@@ -85,6 +85,20 @@ export const addSignupByUserId = async (connectionStr: string, user_id: number, 
 	return { user_id, event_id };
 };
 
+export const removeSignup = async (connectionStr: string, user_id: number, event_id: number) => {
+	const neon_sql = neon(connectionStr);
+	const db = drizzle(neon_sql);
+
+	const removed = await db
+		.delete(sign_ups)
+		.where(and(eq(sign_ups.event_id, event_id), eq(sign_ups.user_id, user_id)))
+		.returning();
+
+	if (removed.length == 0) {
+		throw new HTTPException(404, { message: '404 - Resource not found' });
+	}
+};
+
 export const fetchSavedByUserId = async (connectionStr: string, user_id: number, limit: number, p: number) => {
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
@@ -132,4 +146,18 @@ export const addSavedByUserId = async (connectionStr: string, user_id: number, e
 
 	await db.insert(saved_events).values({ user_id, event_id });
 	return { user_id, event_id };
+};
+
+export const removeSaved = async (connectionStr: string, user_id: number, event_id: number) => {
+	const neon_sql = neon(connectionStr);
+	const db = drizzle(neon_sql);
+
+	const removed = await db
+		.delete(saved_events)
+		.where(and(eq(saved_events.event_id, event_id), eq(saved_events.user_id, user_id)))
+		.returning();
+
+	if (removed.length == 0) {
+		throw new HTTPException(404, { message: '404 - Resource not found' });
+	}
 };

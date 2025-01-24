@@ -7,6 +7,8 @@ import {
 	fetchSavedByUserId,
 	fetchSignupsByUserId,
 	fetchUserById,
+	removeSaved,
+	removeSignup,
 	removeUserById,
 } from '../models/users-models';
 import { connectionStr } from './utils';
@@ -46,6 +48,15 @@ export const postSignupByUserId = async (c: Context<{ Bindings: Env }>) => {
 	return c.json({ signup }, 201);
 };
 
+export const deleteSignup = async (c: Context<{ Bindings: Env }>) => {
+	const user_id = c.req.param('user_id');
+	const event_id = c.req.param('event_id');
+
+	await removeSignup(connectionStr(c)!, Number(user_id), Number(event_id));
+
+	return c.body(null, 204);
+};
+
 export const getSavedByUserId = async (c: Context<{ Bindings: Env }>) => {
 	const user_id = c.req.param('user_id');
 	const limit = c.req.query('limit') ? Number(c.req.query('limit')) : 10;
@@ -60,4 +71,13 @@ export const postSavedByUserId = async (c: Context<{ Bindings: Env }>) => {
 	const { event_id } = await c.req.json();
 	const saved = await addSavedByUserId(connectionStr(c)!, Number(user_id), event_id);
 	return c.json({ saved }, 201);
+};
+
+export const deleteSaved = async (c: Context<{ Bindings: Env }>) => {
+	const user_id = c.req.param('user_id');
+	const event_id = c.req.param('event_id');
+
+	await removeSaved(connectionStr(c)!, Number(user_id), Number(event_id));
+
+	return c.body(null, 204);
 };
