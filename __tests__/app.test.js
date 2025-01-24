@@ -329,7 +329,7 @@ describe('/events', () => {
 			expect(response.status).toBe(400);
 
 			const data = await response.json();
-			expect(data.message).toBe('400 - Invalid data type on request body');
+			expect(data.message).toBe('400 - Invalid data type');
 		});
 		test('201 - Ignores any extra fields on the requestb body', async () => {
 			const postInfo = {
@@ -379,7 +379,7 @@ describe('/events', () => {
 			expect(response.status).toBe(400);
 
 			const data = await response.json();
-			expect(data.message).toBe('400 - Invalid data type on request body');
+			expect(data.message).toBe('400 - Invalid data type');
 		});
 	});
 });
@@ -487,6 +487,130 @@ describe('/events/:event_id/users', () => {
 	});
 });
 
+describe('/users/:user_id/saved', () => {
+	describe('GET', () => {
+		test('200 - responds with the events that the specified user has signed up to', async () => {
+			const response = await app.request('/users/2/saved');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+
+			expect(data.saved.length).toBe(2);
+			data.saved.forEach((event) => {
+				expect(event).toEqual({
+					event_id: expect.any(Number),
+					event_name: expect.any(String),
+					event_date: expect.any(String),
+					start_time: expect.any(String),
+					end_time: expect.any(String),
+					image_URL: expect.any(String),
+					signup_limit: expect.any(Number),
+					price: expect.any(String),
+				});
+			});
+		});
+		test('200 - can add p  and limit queries', async () => {
+			const response = await app.request('/users/2/saved?limit=1&p=2');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+
+			expect(data.saved.length).toBe(1);
+			data.saved.forEach((event) => {
+				expect(event).toEqual({
+					event_id: expect.any(Number),
+					event_name: expect.any(String),
+					event_date: expect.any(String),
+					start_time: expect.any(String),
+					end_time: expect.any(String),
+					image_URL: expect.any(String),
+					signup_limit: expect.any(Number),
+					price: expect.any(String),
+				});
+			});
+		});
+		test('400 - responds with an error when the p or limit queries are invalid', async () => {
+			const response = await app.request('/users/2/saved?limit=hello&p=2');
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid data type for query');
+		});
+		test('404 - responds with an error when the user does not exist', async () => {
+			const response = await app.request('/users/2000000/saved?limit=2&p=2');
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toBe('404 - User not found');
+		});
+		test('200 responds with an empty array if the user does not have any signups', async () => {
+			const response = await app.request('/users/6/saved');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.saved.length).toBe(0);
+		});
+	});
+	describe('POST', () => {
+		test('201 - responds with the succesfully posted event_id and user_id', async () => {
+			const postInfo = { event_id: 3 };
+			const response = await app.request('/users/6/saved', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(201);
+
+			const data = await response.json();
+			expect(data.saved).toEqual({ user_id: 6, event_id: 3 });
+		});
+		test('400 - responds with an error when id is incorrect data type', async () => {
+			const postInfo = { event_id: 3 };
+			const response = await app.request('/users/lian/saved', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid data type');
+		});
+		test('400 - responds with an error when id is incorrect data type', async () => {
+			const postInfo = { event_id: 'hello' };
+			const response = await app.request('/users/6/saved', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid data type');
+		});
+		test('404 - responds with an error when user_id does not exist', async () => {
+			const postInfo = { event_id: 3 };
+			const response = await app.request('/users/6909090/saved', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toBe('404 - Resource not found');
+		});
+		test('404 - responds with an error when event_id does not exist', async () => {
+			const postInfo = { event_id: 3000000 };
+			const response = await app.request('/users/6/saved', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toBe('404 - Resource not found');
+		});
+		test('403 - responds with an error when the user has already saved the same event', async () => {
+			const postInfo = { event_id: 5 };
+			const response = await app.request('/users/2/saved', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(403);
+
+			const data = await response.json();
+			expect(data.message).toBe('403 - Resource already exists');
+		});
+		test('400 - responds with an error when event id not provided', async () => {
+			const postInfo = {};
+			const response = await app.request('/users/2/saved', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Missing information on request body');
+		});
+	});
+});
+
 describe('/users/:user_id/signups', () => {
 	describe('GET', () => {
 		test('200 - responds with the events that the specified user has signed up to', async () => {
@@ -549,6 +673,64 @@ describe('/users/:user_id/signups', () => {
 
 			const data = await response.json();
 			expect(data.signups.length).toBe(0);
+		});
+	});
+	describe.only('POST', () => {
+		test('201 - responds with the succesfully posted event_id and user_id', async () => {
+			const postInfo = { event_id: 3 };
+			const response = await app.request('/users/6/signups', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(201);
+
+			const data = await response.json();
+			expect(data.signup).toEqual({ user_id: 6, event_id: 3 });
+		});
+		test('400 - responds with an error when id is incorrect data type', async () => {
+			const postInfo = { event_id: 3 };
+			const response = await app.request('/users/lian/signups', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid data type');
+		});
+		test('400 - responds with an error when id is incorrect data type', async () => {
+			const postInfo = { event_id: 'hello' };
+			const response = await app.request('/users/6/signups', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid data type');
+		});
+		test('404 - responds with an error when user_id does not exist', async () => {
+			const postInfo = { event_id: 3 };
+			const response = await app.request('/users/6909090/signups', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toBe('404 - Resource not found');
+		});
+		test('404 - responds with an error when event_id does not exist', async () => {
+			const postInfo = { event_id: 3000000 };
+			const response = await app.request('/users/6/signups', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toBe('404 - Resource not found');
+		});
+		test('403 - responds with an error when the user has already saved the same event', async () => {
+			const postInfo = { event_id: 2 };
+			const response = await app.request('/users/3/signups', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(403);
+
+			const data = await response.json();
+			expect(data.message).toBe('403 - Resource already exists');
+		});
+		test('400 - responds with an error when event id not provided', async () => {
+			const postInfo = {};
+			const response = await app.request('/users/2/signups', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Missing information on request body');
 		});
 	});
 });
