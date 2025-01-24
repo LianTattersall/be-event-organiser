@@ -23,11 +23,19 @@ export const events = pgTable('events', {
 });
 
 export const saved_events = pgTable('saved_events', {
-	event_id: integer('event_id').references(() => events.event_id, { onDelete: 'cascade' }),
-	user_id: integer('user_id').references(() => users.user_id, { onDelete: 'cascade' }),
+	event_id: integer('event_id')
+		.references(() => events.event_id, { onDelete: 'cascade' })
+		.notNull(),
+	user_id: integer('user_id')
+		.references(() => users.user_id, { onDelete: 'cascade' })
+		.notNull(),
 });
 
 export const sign_ups = pgTable('sign_ups', {
-	event_id: integer('event_id').references(() => events.event_id, { onDelete: 'cascade' }),
-	user_id: integer('user_id').references(() => users.user_id, { onDelete: 'cascade' }),
+	event_id: integer('event_id')
+		.references(() => events.event_id, { onDelete: 'cascade' })
+		.notNull(),
+	user_id: integer('user_id')
+		.references(() => users.user_id, { onDelete: 'cascade' })
+		.notNull(),
 });
