@@ -611,6 +611,25 @@ describe('/users/:user_id/saved', () => {
 	});
 });
 
+describe('/users/:user_id/saved/:event_id', () => {
+	describe('DELETE', () => {
+		test('204 - responds with empty body upon successful deletion', async () => {
+			const response = await app.request('/users/1/saved/3', { method: 'DELETE' });
+			expect(response.status).toBe(204);
+
+			const data = response.body;
+			expect(data).toBe(null);
+		});
+		test('404 - responds with error when saved event does not exist', async () => {
+			const response = await app.request('/users/6/saved/12', { method: 'DELETE' });
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toBe('404 - Resource not found');
+		});
+	});
+});
+
 describe('/users/:user_id/signups', () => {
 	describe('GET', () => {
 		test('200 - responds with the events that the specified user has signed up to', async () => {
@@ -675,7 +694,7 @@ describe('/users/:user_id/signups', () => {
 			expect(data.signups.length).toBe(0);
 		});
 	});
-	describe.only('POST', () => {
+	describe('POST', () => {
 		test('201 - responds with the succesfully posted event_id and user_id', async () => {
 			const postInfo = { event_id: 3 };
 			const response = await app.request('/users/6/signups', { method: 'POST', body: JSON.stringify(postInfo) });
@@ -731,6 +750,25 @@ describe('/users/:user_id/signups', () => {
 
 			const data = await response.json();
 			expect(data.message).toBe('400 - Missing information on request body');
+		});
+	});
+});
+
+describe('/users/:user_id/signups/:event_id', () => {
+	describe('DELETE', () => {
+		test('204 - responds with empty body upon successful deletion', async () => {
+			const response = await app.request('/users/1/signups/3', { method: 'DELETE' });
+			expect(response.status).toBe(204);
+
+			const data = response.body;
+			expect(data).toBe(null);
+		});
+		test('404 - responds with error when saved event does not exist', async () => {
+			const response = await app.request('/users/6/signups/12', { method: 'DELETE' });
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toBe('404 - Resource not found');
 		});
 	});
 });
