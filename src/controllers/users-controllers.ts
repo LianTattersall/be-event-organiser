@@ -36,8 +36,9 @@ export const getSignupsByUserId = async (c: Context<{ Bindings: Env }>) => {
 	const user_id = c.req.param('user_id');
 	const limit = c.req.query('limit') ? Number(c.req.query('limit')) : 10;
 	const p = c.req.query('p') ? Number(c.req.query('p')) : 1;
+	const type = c.req.query('type') || '';
 
-	const signups = await fetchSignupsByUserId(connectionStr(c)!, Number(user_id), Number(limit), Number(p));
+	const signups = await fetchSignupsByUserId(connectionStr(c)!, Number(user_id), Number(limit), Number(p), type);
 	return c.json({ signups });
 };
 
@@ -61,8 +62,9 @@ export const getSavedByUserId = async (c: Context<{ Bindings: Env }>) => {
 	const user_id = c.req.param('user_id');
 	const limit = c.req.query('limit') ? Number(c.req.query('limit')) : 10;
 	const p = c.req.query('p') ? Number(c.req.query('p')) : 1;
+	const type = c.req.query('type') || '';
 
-	const saved = await fetchSavedByUserId(connectionStr(c)!, Number(user_id), Number(limit), Number(p));
+	const saved = await fetchSavedByUserId(connectionStr(c)!, Number(user_id), Number(limit), Number(p), type);
 	return c.json({ saved });
 };
 
