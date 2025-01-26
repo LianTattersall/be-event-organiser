@@ -50,5 +50,9 @@
     {
         "user_id": 4,
         "event_id": 12 
+    },
+    {
+        "user_id":2,
+        "event_id": 11
     }
 ]
