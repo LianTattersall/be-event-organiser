@@ -27,7 +27,7 @@
         "price": 9.00,
         "event_id":3, 
         "event_name": "Visit to NASA",
-        "event_date": "2025-03-01",
+        "event_date": "2028-03-01",
         "start_time": "08:00:00",
         "end_time": "17:00:00",
         "description": "Get an exclusive tour of NASA",
@@ -111,12 +111,11 @@
         "price": 10.50,
         "event_id": 10,
         "event_name": "Secret Santa Exchange",
-        "event_date": "2025-12-15",
+        "event_date": "2027-12-15",
         "start_time": "15:00:00",
         "end_time": "20:00:00",
         "description": "Exchange your gifts exciting",
         "organiser_id": 2,
-        "signup_limit": 30,
         "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg"
     },
     {

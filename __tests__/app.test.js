@@ -1,6 +1,6 @@
 import app from '../src/index';
 import endpoints from '../src/endpoints.json';
-import { config } from 'dotenv';
+import { toBeOneOf } from 'jest-extended';
 import seed from '../src/db/seed';
 import userData from '../src/db/data/testData/users-test.json';
 import eventData from '../src/db/data/testData/events-test.json';
@@ -126,7 +126,7 @@ describe('/events', () => {
 					start_time: expect.any(String),
 					end_time: expect.any(String),
 					image_URL: expect.any(String),
-					signup_limit: expect.any(Number),
+					signup_limit: expect.toBeOneOf([expect.any(Number), null]),
 					signups: expect.any(Number),
 					price: expect.any(String),
 				});
@@ -148,7 +148,7 @@ describe('/events', () => {
 					start_time: expect.any(String),
 					end_time: expect.any(String),
 					image_URL: expect.any(String),
-					signup_limit: expect.any(Number),
+					signup_limit: expect.toBeOneOf([expect.any(Number), null]),
 					signups: expect.any(Number),
 					price: expect.any(String),
 				});
@@ -550,6 +550,49 @@ describe('/users/:user_id/saved', () => {
 			const data = await response.json();
 			expect(data.saved.length).toBe(0);
 		});
+		test('200 - query type=curr filters signups for upcoming events', async () => {
+			const response = await app.request('/users/2/saved?type=curr');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+
+			expect(data.saved.length).toBe(1);
+			expect(data.saved[0]).toEqual({
+				price: '12.20',
+				event_id: 2,
+				event_name: 'Picnic in Hyde Park',
+				event_date: '2025-07-01',
+				start_time: '12:00:00',
+				end_time: '18:00:00',
+				signup_limit: 10,
+				image_URL: 'https://media.timeout.com/images/106207035/750/422/image.jpg',
+			});
+		});
+		test('200 - query type=past filters signups for past events', async () => {
+			const response = await app.request('/users/2/saved?type=past');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+
+			expect(data.saved.length).toBe(1);
+			expect(data.saved[0]).toEqual({
+				price: '10.00',
+				event_id: 5,
+				event_name: 'Secret Santa Exchange',
+				event_date: '2024-12-15',
+				start_time: '15:00:00',
+				end_time: '20:00:00',
+				signup_limit: 30,
+				image_URL: 'https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg',
+			});
+		});
+		test('400 - responds with an error when the type filter is invalid', async () => {
+			const response = await app.request('/users/6/saved?type=hello');
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid query for type');
+		});
 	});
 	describe('POST', () => {
 		test('201 - responds with the succesfully posted event_id and user_id', async () => {
@@ -638,7 +681,7 @@ describe('/users/:user_id/signups', () => {
 
 			const data = await response.json();
 
-			expect(data.signups.length).toBe(3);
+			expect(data.signups.length).toBe(4);
 			data.signups.forEach((event) => {
 				expect(event).toEqual({
 					event_id: expect.any(Number),
@@ -693,18 +736,64 @@ describe('/users/:user_id/signups', () => {
 			const data = await response.json();
 			expect(data.signups.length).toBe(0);
 		});
+		test('200 - query type=curr filters signups for upcoming events', async () => {
+			const response = await app.request('/users/2/signups?type=curr');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+
+			expect(data.signups.length).toBe(3);
+			data.signups.forEach((event) => {
+				expect(event).toEqual({
+					event_id: expect.any(Number),
+					event_name: expect.any(String),
+					event_date: expect.any(String),
+					start_time: expect.any(String),
+					end_time: expect.any(String),
+					image_URL: expect.any(String),
+					signup_limit: expect.any(Number),
+					price: expect.any(String),
+				});
+				expect(new Date(event.event_date).getTime()).toBeGreaterThan(new Date().getTime());
+			});
+		});
+		test('200 - query type=past filters signups for past events', async () => {
+			const response = await app.request('/users/2/signups?type=past');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+
+			expect(data.signups.length).toBe(1);
+			expect(data.signups[0]).toEqual({
+				price: '10.90',
+				event_id: 11,
+				event_name: 'Secret Santa Exchange',
+				event_date: '2024-12-15',
+				start_time: '15:00:00',
+				end_time: '20:00:00',
+				signup_limit: 2,
+				image_URL: 'https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg',
+			});
+		});
+		test('400 - responds with an error when the type filter is invalid', async () => {
+			const response = await app.request('/users/6/signups?type=hello');
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid query for type');
+		});
 	});
 	describe('POST', () => {
 		test('201 - responds with the succesfully posted event_id and user_id', async () => {
-			const postInfo = { event_id: 3 };
+			const postInfo = { event_id: 8 };
 			const response = await app.request('/users/6/signups', { method: 'POST', body: JSON.stringify(postInfo) });
 			expect(response.status).toBe(201);
 
 			const data = await response.json();
-			expect(data.signup).toEqual({ user_id: 6, event_id: 3 });
+			expect(data.signup).toEqual({ user_id: 6, event_id: 8 });
 		});
 		test('400 - responds with an error when id is incorrect data type', async () => {
-			const postInfo = { event_id: 3 };
+			const postInfo = { event_id: 8 };
 			const response = await app.request('/users/lian/signups', { method: 'POST', body: JSON.stringify(postInfo) });
 			expect(response.status).toBe(400);
 
@@ -720,7 +809,7 @@ describe('/users/:user_id/signups', () => {
 			expect(data.message).toBe('400 - Invalid data type');
 		});
 		test('404 - responds with an error when user_id does not exist', async () => {
-			const postInfo = { event_id: 3 };
+			const postInfo = { event_id: 8 };
 			const response = await app.request('/users/6909090/signups', { method: 'POST', body: JSON.stringify(postInfo) });
 			expect(response.status).toBe(404);
 
@@ -751,6 +840,30 @@ describe('/users/:user_id/signups', () => {
 			const data = await response.json();
 			expect(data.message).toBe('400 - Missing information on request body');
 		});
+		test('422 - responds with an error when a user tries to signup up for an expired event', async () => {
+			const postInfo = { event_id: 5 };
+			const response = await app.request('/users/2/signups', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(422);
+
+			const data = await response.json();
+			expect(data.message).toBe('422 - Event has expired');
+		});
+		test('409 - responds with an error when a user tries to signup up for an event which has reached its limit', async () => {
+			const postInfo = { event_id: 3 };
+			const response = await app.request('/users/6/signups', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(409);
+
+			const data = await response.json();
+			expect(data.message).toBe("409 - Event has reached it's signup limit");
+		});
+		test('201 - can signup to an event with an unlimited signup limit', async () => {
+			const postInfo = { event_id: 10 };
+			const response = await app.request('/users/6/signups', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(201);
+
+			const data = await response.json();
+			expect(data.signup).toEqual({ user_id: 6, event_id: 10 });
+		});
 	});
 });
 
@@ -769,6 +882,110 @@ describe('/users/:user_id/signups/:event_id', () => {
 
 			const data = await response.json();
 			expect(data.message).toBe('404 - Resource not found');
+		});
+	});
+});
+
+describe('/events/organiser/:orgnaniser_id', () => {
+	describe.only('GET', () => {
+		test('200 - responds with all the events organised by the user with the specified ID', async () => {
+			const response = await app.request('/events/organiser/1');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.events.length).toBe(4);
+			data.events.forEach((event) => {
+				expect(event).toEqual({
+					event_id: expect.any(Number),
+					event_name: expect.any(String),
+					event_date: expect.any(String),
+					start_time: expect.any(String),
+					end_time: expect.any(String),
+					image_URL: expect.any(String),
+					signup_limit: expect.any(Number),
+					signups: expect.any(Number),
+					price: expect.any(String),
+				});
+			});
+		});
+		test('404 - responds with an error when the organiser_id does not exist', async () => {
+			const response = await app.request('/events/organiser/12344444');
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toBe('404 - Organiser not found');
+		});
+		test('404 - responds with an error when the organiser_id does not exist', async () => {
+			const response = await app.request('/events/organiser/3');
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toBe('404 - Organiser not found');
+		});
+		test('200 - Can have p and limit queries', async () => {
+			const response = await app.request('/events/organiser/1?p=2&limit=1');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.events.length).toBe(1);
+			data.events.forEach((event) => {
+				expect(event).toEqual({
+					event_id: expect.any(Number),
+					event_name: expect.any(String),
+					event_date: expect.any(String),
+					start_time: expect.any(String),
+					end_time: expect.any(String),
+					image_URL: expect.any(String),
+					signup_limit: expect.any(Number),
+					signups: expect.any(Number),
+					price: expect.any(String),
+				});
+			});
+		});
+		test('400 - responds with an error when the p or limit are not numbers', async () => {
+			const response = await app.request('/events/organiser/3?p=hello');
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid data type for query');
+		});
+		test('200 - can add type=curr query which filter for future events', async () => {
+			const response = await app.request('/events/organiser/1?type=curr');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.events.length).toBe(3);
+			data.events.forEach((event) => {
+				expect(event).toEqual({
+					event_id: expect.any(Number),
+					event_name: expect.any(String),
+					event_date: expect.any(String),
+					start_time: expect.any(String),
+					end_time: expect.any(String),
+					image_URL: expect.any(String),
+					signup_limit: expect.any(Number),
+					signups: expect.any(Number),
+					price: expect.any(String),
+				});
+			});
+		});
+		test('200 - can add type=past query which filter for past events', async () => {
+			const response = await app.request('/events/organiser/1?type=past');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.events.length).toBe(1);
+			expect(data.events[0]).toEqual({
+				event_id: expect.any(Number),
+				event_name: expect.any(String),
+				event_date: expect.any(String),
+				start_time: expect.any(String),
+				end_time: expect.any(String),
+				image_URL: expect.any(String),
+				signup_limit: expect.any(Number),
+				signups: expect.any(Number),
+				price: expect.any(String),
+			});
 		});
 	});
 });

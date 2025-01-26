@@ -1,8 +1,9 @@
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { events, saved_events, sign_ups, users } from '../db/schema';
-import { and, eq } from 'drizzle-orm';
+import { and, asc, eq, sql } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
+import { currSaved, currSignups, pastSaved, pastSignups } from './query-builder';
 
 type User = { name: string; email: string; admin: boolean };
 
@@ -36,12 +37,16 @@ export const removeUserById = async (user_id: number, connectionStr: string) => 
 	}
 };
 
-export const fetchSignupsByUserId = async (connectionStr: string, user_id: number, limit: number, p: number) => {
+export const fetchSignupsByUserId = async (connectionStr: string, user_id: number, limit: number, p: number, type: string) => {
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
 
 	if (!limit || !p) {
 		throw new HTTPException(400, { message: '400 - Invalid data type for query' });
+	}
+
+	if (!['curr', 'past', ''].includes(type)) {
+		throw new HTTPException(400, { message: '400 - Invalid query for type' });
 	}
 
 	const userDetails = await db.select().from(users).where(eq(users.user_id, user_id));
@@ -62,17 +67,44 @@ export const fetchSignupsByUserId = async (connectionStr: string, user_id: numbe
 		})
 		.from(events)
 		.innerJoin(sign_ups, eq(sign_ups.event_id, events.event_id))
-		.where(eq(sign_ups.user_id, user_id))
 		.limit(limit)
-		.offset((p - 1) * limit);
+		.offset((p - 1) * limit)
+		.orderBy(asc(events.event_date))
+		.$dynamic();
 
-	return signups;
+	if (type == 'curr') {
+		return currSignups(signups, user_id);
+	}
+	if (type == 'past') {
+		return pastSignups(signups, user_id);
+	}
+
+	return signups.where(eq(sign_ups.user_id, user_id));
 };
 
 export const addSignupByUserId = async (connectionStr: string, user_id: number, event_id: number) => {
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
 
+	const event = await db
+		.select({
+			date: events.event_date,
+			signups: sql`CAST(COALESCE(COUNT(${sign_ups.user_id}), 0) AS INT)`,
+			signup_limit: events.signup_limit,
+		})
+		.from(events)
+		.where(eq(events.event_id, event_id))
+		.leftJoin(sign_ups, eq(events.event_id, sign_ups.event_id))
+		.groupBy(events.event_date, events.signup_limit);
+
+	if (event.length != 0) {
+		if (new Date().getTime() > new Date(event[0].date).getTime()) {
+			throw new HTTPException(422, { message: '422 - Event has expired' });
+		}
+		if (Number(event[0].signups) >= Number(event[0].signup_limit) && event[0].signup_limit != null) {
+			throw new HTTPException(409, { message: "409 - Event has reached it's signup limit" });
+		}
+	}
 	const savedAlready = await db
 		.select()
 		.from(sign_ups)
@@ -99,12 +131,16 @@ export const removeSignup = async (connectionStr: string, user_id: number, event
 	}
 };
 
-export const fetchSavedByUserId = async (connectionStr: string, user_id: number, limit: number, p: number) => {
+export const fetchSavedByUserId = async (connectionStr: string, user_id: number, limit: number, p: number, type: string) => {
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
 
 	if (!limit || !p) {
 		throw new HTTPException(400, { message: '400 - Invalid data type for query' });
+	}
+
+	if (!['curr', 'past', ''].includes(type)) {
+		throw new HTTPException(400, { message: '400 - Invalid query for type' });
 	}
 
 	const userDetails = await db.select().from(users).where(eq(users.user_id, user_id));
@@ -125,11 +161,19 @@ export const fetchSavedByUserId = async (connectionStr: string, user_id: number,
 		})
 		.from(events)
 		.innerJoin(saved_events, eq(saved_events.event_id, events.event_id))
-		.where(eq(saved_events.user_id, user_id))
 		.limit(limit)
-		.offset((p - 1) * limit);
+		.offset((p - 1) * limit)
+		.orderBy(asc(events.event_date))
+		.$dynamic();
 
-	return savedEvents;
+	if (type == 'curr') {
+		return currSaved(savedEvents, user_id);
+	}
+	if (type == 'past') {
+		return pastSaved(savedEvents.$dynamic(), user_id);
+	}
+
+	return savedEvents.where(eq(saved_events.user_id, user_id));
 };
 
 export const addSavedByUserId = async (connectionStr: string, user_id: number, event_id: number) => {

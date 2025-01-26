@@ -1,7 +1,7 @@
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { events, sign_ups, users } from '../db/schema';
-import { asc, desc, eq, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, gt, lt, sql } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 import { currentEvents, currentEventsAndSearch, searchResults, signedUpUserSearch } from './query-builder';
 
@@ -143,10 +143,62 @@ export const fetchEventSignups = async (connectionStr: string, event_id: number,
 		.innerJoin(users, eq(sign_ups.user_id, users.user_id))
 		.limit(limit)
 		.offset((p - 1) * limit)
+		.orderBy(users.name)
 		.$dynamic();
 
 	if (searchTerm) {
 		return signedUpUserSearch(signedUpUsers, searchTerm, event_id);
 	}
 	return signedUpUsers.where(eq(sign_ups.event_id, event_id));
+};
+
+export const fetchOrganisersEvents = async (connectionStr: string, organiser_id: any, p: number, limit: number, type: string) => {
+	const neon_sql = neon(connectionStr);
+	const db = drizzle(neon_sql);
+
+	if (!limit || !p) {
+		throw new HTTPException(400, { message: '400 - Invalid data type for query' });
+	}
+
+	const user = await db.select().from(users).where(eq(users.user_id, organiser_id));
+	if (user.length == 0) {
+		throw new HTTPException(404, { message: '404 - Organiser not found' });
+	}
+	if (user && !user[0].admin) {
+		throw new HTTPException(404, { message: '404 - Organiser not found' });
+	}
+
+	const organisersEvents = db
+		.select({
+			event_id: events.event_id,
+			event_name: events.event_name,
+			event_date: events.event_date,
+			start_time: events.start_time,
+			end_time: events.end_time,
+			image_URL: events.image_URL,
+			signup_limit: events.signup_limit,
+			price: events.price,
+			signups: sql`CAST(COALESCE(COUNT(${sign_ups.user_id}), 0) AS INT)`,
+		})
+		.from(events)
+		.leftJoin(sign_ups, eq(sign_ups.event_id, events.event_id))
+		.groupBy(events.event_id)
+		.limit(limit)
+		.offset((p - 1) * limit)
+		.$dynamic();
+
+	if (type == 'curr') {
+		const date = new Date();
+		return organisersEvents.where(
+			and(eq(events.organiser_id, organiser_id), gt(events.event_date, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`))
+		);
+	}
+	if (type == 'past') {
+		const date = new Date();
+		return organisersEvents.where(
+			and(eq(events.organiser_id, organiser_id), lt(events.event_date, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`))
+		);
+	}
+
+	return organisersEvents.where(eq(events.organiser_id, organiser_id));
 };

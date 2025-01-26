@@ -15,7 +15,7 @@
     },
     "GET /events":{
         "description": "Responds with an array of event objects",
-        "queries": ["p - page number" , "limit - number of events in array", "type - can be 'current' or 'all'. 'current' filters out past events and events that have reached the signup limit" , "searchTerm - filters events by a searchTerm", "sortby - Can be date, price, or id", "orderby - Can be asc or desc"],
+        "queries": ["p - page number (default 1)" , "limit - number of events in array (default 10)", "type - can be 'current' or 'all'. 'current' filters out past events and events that have reached the signup limit" , "searchTerm - filters events by a searchTerm", "sortby - Can be date, price, or id", "orderby - Can be asc or desc"],
         "exampleResponse": [{
             "event_id": 1,
             "event_name": "London Marathon",
@@ -83,5 +83,66 @@
             { "name": "Lian", "email": "lian@gmail.com" },
             { "name": "Hanna", "email": "Hanna@gmail.com" }
           ]
+    },
+    "GET /users/:user_id/signups" : {
+        "description": "Responds with an array of events that the user has signed up to",
+        "queries": ["p - page number","limit - number of events in array" , "type - can be curr (upcoming signups) or past (events that have taken place). Default returns all signups"],
+        "exampleResponse": [
+            {
+              "event_id": 1,
+              "event_name": "London Marathon",
+              "event_date": "2025-04-01",
+              "start_time": "10:00:00",
+              "end_time": "18:00:00",
+              "image_URL": "https://www.londontravelwatch.org.uk/wp-content/uploads/2023/04/London-Marathon-cropped.png",
+              "signup_limit": 3000,
+              "price": "10.00"
+            }]
+    },
+    "POST /users/:user_id/signups": {
+        "description": "Posts a user_id and event_id to the signup table",
+        "requestFormat": {"event_id": 4},
+        "exampleResponse": {"user_id": 2, "event_id":4}
+    },
+    "DELETE /users/:user_id/signups/:event_id": {
+        "description": "Deletes a user from the signup table effectively removing them from the event"
+    },
+    "GET /users/:user_id/saved" : {
+        "description": "Responds with an array of events that the user has saved",
+        "queries": ["p - page number","limit - number of events in array" , "type - can be curr (upcoming events) or past (events that have taken place). Default returns all saved events"],
+        "exampleResponse": [
+            {
+              "event_id": 1,
+              "event_name": "London Marathon",
+              "event_date": "2025-04-01",
+              "start_time": "10:00:00",
+              "end_time": "18:00:00",
+              "image_URL": "https://www.londontravelwatch.org.uk/wp-content/uploads/2023/04/London-Marathon-cropped.png",
+              "signup_limit": 3000,
+              "price": "10.00"
+            }]
+    },
+    "POST /users/:user_id/saved": {
+        "description": "Posts a user_id and event_id to the saved_events table",
+        "requestFormat": {"event_id": 4},
+        "exampleResponse": {"user_id": 2, "event_id":4}
+    },
+    "DELETE /users/:user_id/saved/:event_id": {
+        "description": "Deletes a user from the saved table."
+    },
+    "GET /events/organiser/:organiser_id": {
+        "description": "Responds with an array of events organised by the specified organiser.",
+        "queries": ["p - page number (default 1)", "limit - number of events in array (default 10)", "type - can be curr (upcoming events) or past (events that have taken place). Default returns all events"],
+        "exampleResponse": [{
+            "event_id": 4,
+            "event_name": "Traitors Final Screening",
+            "event_date": "2025-00-24",
+            "start_time": "21:00:00",
+            "end_time": "22:00:00",
+            "image_URL": "https://ichef.bbci.co.uk/images/ic/1920x1080/p0kg0xm2.jpg",
+            "signup_limit": 100,
+            "signups": 9,
+            "price": "0.00"
+        }]
     }
 }
