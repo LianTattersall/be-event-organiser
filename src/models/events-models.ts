@@ -202,3 +202,15 @@ export const fetchOrganisersEvents = async (connectionStr: string, organiser_id:
 
 	return organisersEvents.where(eq(events.organiser_id, organiser_id));
 };
+
+export const updateEvent = async (connectionStr: string, event_id: number, patchInfo: any) => {
+	const neon_sql = neon(connectionStr);
+	const db = drizzle(neon_sql);
+
+	const updatedEvent = await db.update(events).set(patchInfo).where(eq(events.event_id, event_id)).returning();
+	if (updatedEvent.length == 0) {
+		throw new HTTPException(404, { message: '404 - Event not found' });
+	}
+
+	return updatedEvent[0];
+};

@@ -40,6 +40,12 @@ app.onError((err, c) => {
 		if (err.code == '23503') {
 			return c.json({ message: '404 - Resource not found' }, 404);
 		}
+		if (err.code == '22008') {
+			return c.json({ message: '400 - Invalid syntax for date/time' }, 400);
+		}
+		if (err.code == '42601') {
+			return c.json({ message: '400 - No information on request body' }, 400);
+		}
 	}
 	console.log(err);
 	return c.json({ message: '500 - Internal server error' }, 500);

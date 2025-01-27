@@ -1,5 +1,13 @@
 import { Context } from 'hono';
-import { addEvent, fetchEventById, fetchEvents, fetchEventSignups, fetchOrganisersEvents, removeEventById } from '../models/events-models';
+import {
+	addEvent,
+	fetchEventById,
+	fetchEvents,
+	fetchEventSignups,
+	fetchOrganisersEvents,
+	removeEventById,
+	updateEvent,
+} from '../models/events-models';
 import { connectionStr } from './utils';
 import { Env } from '../index';
 
@@ -50,4 +58,12 @@ export const getOrganisersEvents = async (c: Context<{ Bindings: Env }>) => {
 	const user_id = c.req.param('organiser_id');
 	const events = await fetchOrganisersEvents(connectionStr(c)!, Number(user_id), Number(p), Number(limit), type);
 	return c.json({ events });
+};
+
+export const patchEvent = async (c: Context<{ Bindings: Env }>) => {
+	const event_id = c.req.param('event_id');
+	const patchInfo = await c.req.json();
+
+	const event = await updateEvent(connectionStr(c)!, Number(event_id), patchInfo);
+	return c.json({ event });
 };
