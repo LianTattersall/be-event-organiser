@@ -6,6 +6,7 @@ import {
 	getEvents,
 	getEventSignups,
 	getOrganisersEvents,
+	patchEvent,
 	postEvent,
 } from '../controllers/events-controllers';
 
@@ -16,6 +17,8 @@ events_routes.get('/', getEvents);
 events_routes.get('/:event_id', getEventById);
 
 events_routes.delete('/:event_id', deleteEventById);
+
+events_routes.patch('/:event_id', patchEvent);
 
 events_routes.post('/', postEvent);
 

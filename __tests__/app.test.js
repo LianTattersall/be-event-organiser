@@ -431,6 +431,106 @@ describe('/events/:event_id', () => {
 			expect(data.message).toBe('404 - Event not found');
 		});
 	});
+	describe.only('PATCH', () => {
+		test('200 - responds with the updated event upon a successful patch', async () => {
+			const patchInfo = {
+				price: '30.00',
+				event_name: 'Richmond Marathon',
+				event_date: '2025-10-13',
+				start_time: '09:00:00',
+				end_time: '16:00:00',
+				description: 'Run around kew gardens and richmond',
+				signup_limit: 600,
+				image_URL: 'https://run-fest.com/wp-content/uploads/2022/08/3-1.jpg',
+			};
+			const response = await app.request('/events/1', { method: 'PATCH', body: JSON.stringify(patchInfo) });
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.event).toEqual({
+				event_id: 1,
+				organiser_id: 1,
+				price: '30.00',
+				event_name: 'Richmond Marathon',
+				event_date: '2025-10-13',
+				start_time: '09:00:00',
+				end_time: '16:00:00',
+				description: 'Run around kew gardens and richmond',
+				signup_limit: 600,
+				image_URL: 'https://run-fest.com/wp-content/uploads/2022/08/3-1.jpg',
+			});
+		});
+		test('200 - can patch with any number of fields', async () => {
+			const patchInfo = { event_name: 'Picnic in Brockwell Park' };
+			const response = await app.request('/events/2', { method: 'PATCH', body: JSON.stringify(patchInfo) });
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.event).toEqual({
+				price: '12.20',
+				event_id: 2,
+				event_name: 'Picnic in Brockwell Park',
+				event_date: '2025-07-01',
+				start_time: '12:00:00',
+				end_time: '18:00:00',
+				description: 'Food in alovely park',
+				organiser_id: 2,
+				signup_limit: 10,
+				image_URL: 'https://media.timeout.com/images/106207035/750/422/image.jpg',
+			});
+		});
+		test('200 - Ignores any additional fields', async () => {
+			const patchInfo = { event_name: 'Picnic in Brockwell Park', reviews: '5 Stars' };
+			const response = await app.request('/events/2', { method: 'PATCH', body: JSON.stringify(patchInfo) });
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.event).toEqual({
+				price: '12.20',
+				event_id: 2,
+				event_name: 'Picnic in Brockwell Park',
+				event_date: '2025-07-01',
+				start_time: '12:00:00',
+				end_time: '18:00:00',
+				description: 'Food in alovely park',
+				organiser_id: 2,
+				signup_limit: 10,
+				image_URL: 'https://media.timeout.com/images/106207035/750/422/image.jpg',
+			});
+		});
+		test('400 - responds with an error for any incorrect data types (price)', async () => {
+			const patchInfo = { price: 'hello' };
+			const response = await app.request('/events/3', { method: 'PATCH', body: JSON.stringify(patchInfo) });
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid data type');
+		});
+		test('400 - responds with an error for any incorrect data types (date/time)', async () => {
+			const patchInfo = { event_date: '23' };
+			const response = await app.request('/events/3', { method: 'PATCH', body: JSON.stringify(patchInfo) });
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Invalid syntax for date/time');
+		});
+		test('400 - responds with an error when there are not valid columns', async () => {
+			const patchInfo = { unknownField: 'Event' };
+			const response = await app.request('/events/6', { method: 'PATCH', body: JSON.stringify(patchInfo) });
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - No information on request body');
+		});
+		test('404 - responds with an error when the event does not exist', async () => {
+			const patchInfo = { event_name: 'Roller skating' };
+			const response = await app.request('/events/23499', { method: 'PATCH', body: JSON.stringify(patchInfo) });
+
+			const data = await response.json();
+
+			expect(data.message).toBe('404 - Event not found');
+		});
+	});
 });
 
 describe('/events/:event_id/users', () => {
@@ -887,7 +987,7 @@ describe('/users/:user_id/signups/:event_id', () => {
 });
 
 describe('/events/organiser/:orgnaniser_id', () => {
-	describe.only('GET', () => {
+	describe('GET', () => {
 		test('200 - responds with all the events organised by the user with the specified ID', async () => {
 			const response = await app.request('/events/organiser/1');
 			expect(response.status).toBe(200);
