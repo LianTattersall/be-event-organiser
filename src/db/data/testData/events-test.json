@@ -1,6 +1,6 @@
 [
     {
-        "price": 10.00,
+        "price": "10.00",
         "event_id": 1,
         "event_name": "London Marathon",
         "event_date": "2025-04-01",
@@ -9,10 +9,12 @@
         "description": "26.2 miles of London",
         "organiser_id": 1,
         "signup_limit": 3000,
-        "image_URL": "https://www.londontravelwatch.org.uk/wp-content/uploads/2023/04/London-Marathon-cropped.png"
+        "image_URL": "https://www.londontravelwatch.org.uk/wp-content/uploads/2023/04/London-Marathon-cropped.png",
+        "firstline_address": "Hyde Park, Serpentine Rd, London",
+        "postcode": "W2 2UH"
     },
     {
-        "price": 12.20,
+        "price": "12.20",
         "event_id": 2,
         "event_name": "Picnic in Hyde Park",
         "event_date": "2025-07-01",
@@ -21,10 +23,12 @@
         "description": "Food in alovely park",
         "organiser_id": 2,
         "signup_limit": 10,
-        "image_URL": "https://media.timeout.com/images/106207035/750/422/image.jpg"
+        "image_URL": "https://media.timeout.com/images/106207035/750/422/image.jpg",
+        "firstline_address": "Hyde Park, Serpentine Rd, London",
+        "postcode": "W2 2UH"
     },
     {
-        "price": 9.00,
+        "price": "9.00",
         "event_id":3, 
         "event_name": "Visit to NASA",
         "event_date": "2028-03-01",
@@ -33,10 +37,12 @@
         "description": "Get an exclusive tour of NASA",
         "organiser_id": 1,
         "signup_limit": 3,
-        "image_URL": "https://d1o72l87sylvqg.cloudfront.net/blue-origin/webheader_bluemoon.png"
+        "image_URL": "https://d1o72l87sylvqg.cloudfront.net/blue-origin/webheader_bluemoon.png",
+        "firstline_address": "Hyde Park, Serpentine Rd, London",
+        "postcode": "W2 2UH"
     },
     {
-        "price": 1.50,
+        "price": "1.50",
         "event_id": 4,
         "event_name": "Birthday Celebrations",
         "event_date": "2025-09-05",
@@ -45,10 +51,12 @@
         "description": "Celebrating 25 years at Pizza Express",
         "organiser_id": 1,
         "signup_limit": 15,
-        "image_URL":"https://static.vecteezy.com/system/resources/thumbnails/027/945/125/small/magical-moments-birthday-cake-and-colorful-balloons-generative-ai-photo.jpg"
+        "image_URL":"https://static.vecteezy.com/system/resources/thumbnails/027/945/125/small/magical-moments-birthday-cake-and-colorful-balloons-generative-ai-photo.jpg",
+        "firstline_address": "Hyde Park, Serpentine Rd, London",
+        "postcode": "W2 2UH"
     },
     {
-        "price": 10.00,
+        "price": "10.00",
         "event_id": 5,
         "event_name": "Secret Santa Exchange",
         "event_date": "2024-12-15",
@@ -57,10 +65,12 @@
         "description": "Exchange your gifts exciting",
         "organiser_id": 2,
         "signup_limit": 30,
-        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg"
+        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg",
+        "firstline_address": "Hyde Park, Serpentine Rd, London",
+        "postcode": "W2 2UH"
     },
     {
-        "price": 10.00,
+        "price": "10.00",
         "event_id": 6,
         "event_name": "Christmas Work Party",
         "event_date": "2024-12-15",
@@ -69,10 +79,12 @@
         "description": "Enjoy a christmas dinner party with colleagues",
         "organiser_id": 1,
         "signup_limit": 30,
-        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg"
+        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg",
+        "firstline_address": "Hyde Park, Serpentine Rd, London",
+        "postcode": "W2 2UH"
     },
     {
-        "price": 14.00,
+        "price": "14.00",
         "event_id": 7,
         "event_name": "Ice skating social",
         "event_date": "2025-2-15",
@@ -81,10 +93,12 @@
         "description": "Get your skates on",
         "organiser_id": 2,
         "signup_limit": 15,
-        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg"
+        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg",
+        "firstline_address": "Hyde Park, Serpentine Rd, London",
+        "postcode": "W2 2UH"
     },
     {
-        "price": 30.00,
+        "price": "30.00",
         "event_id": 8,
         "event_name": "Award ceremony",
         "event_date": "2025-7-28",
@@ -93,10 +107,12 @@
         "description": "Celebrate this years acheivements",
         "organiser_id": 2,
         "signup_limit": 100,
-        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg"
+        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg",
+        "firstline_address": "Hyde Park, Serpentine Rd, London",
+        "postcode": "W2 2UH"
     },
     {
-        "price": 10.00,
+        "price": "10.00",
         "event_id": 9,
         "event_name": "Secret Santa Exchange",
         "event_date": "2024-12-15",
@@ -105,10 +121,12 @@
         "description": "Exchange your gifts exciting",
         "organiser_id": 2,
         "signup_limit": 30,
-        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg"
+        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg",
+        "firstline_address": "Hyde Park, Serpentine Rd, London",
+        "postcode": "W2 2UH"
     },
     {
-        "price": 10.50,
+        "price": "10.50",
         "event_id": 10,
         "event_name": "Secret Santa Exchange",
         "event_date": "2027-12-15",
@@ -116,10 +134,12 @@
         "end_time": "20:00:00",
         "description": "Exchange your gifts exciting",
         "organiser_id": 2,
-        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg"
+        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg",
+        "firstline_address": "Hyde Park, Serpentine Rd, London",
+        "postcode": "W2 2UH"
     },
     {
-        "price": 10.90,
+        "price": "10.90",
         "event_id": 11,
         "event_name": "Secret Santa Exchange",
         "event_date": "2024-12-15",
@@ -128,10 +148,12 @@
         "description": "Exchange your gifts exciting",
         "organiser_id": 2,
         "signup_limit": 2,
-        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg"
+        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg",
+        "firstline_address": "Hyde Park, Serpentine Rd, London",
+        "postcode": "W2 2UH"
     },
     {
-        "price": 20.00,
+        "price": "20.00",
         "event_id": 12,
         "event_name": "Secret Santa Exchange",
         "event_date": "2026-12-15",
@@ -140,10 +162,12 @@
         "description": "Exchange your gifts exciting",
         "organiser_id": 2,
         "signup_limit": 3,
-        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg"
+        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg",
+        "firstline_address": "Hyde Park, Serpentine Rd, London",
+        "postcode": "W2 2UH"
     },
     {
-        "price": 40.00,
+        "price": "40.00",
         "event_id": 13,
         "event_name": "Secret Santa Exchange",
         "event_date": "2088-12-15",
@@ -152,6 +176,8 @@
         "description": "Exchange your gifts exciting",
         "organiser_id": 2,
         "signup_limit": 30,
-        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg"
+        "image_URL":"https://assets.editorial.aetnd.com/uploads/2009/10/christmas-gettyimages-184652817.jpg",
+        "firstline_address": "Hyde Park, Serpentine Rd, London",
+        "postcode": "W2 2UH"
     }
 ]

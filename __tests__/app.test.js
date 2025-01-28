@@ -129,6 +129,7 @@ describe('/events', () => {
 					signup_limit: expect.toBeOneOf([expect.any(Number), null]),
 					signups: expect.any(Number),
 					price: expect.any(String),
+					firstline_address: expect.any(String),
 				});
 			});
 		});
@@ -151,6 +152,7 @@ describe('/events', () => {
 					signup_limit: expect.toBeOneOf([expect.any(Number), null]),
 					signups: expect.any(Number),
 					price: expect.any(String),
+					firstline_address: expect.any(String),
 				});
 			});
 		});
@@ -227,6 +229,7 @@ describe('/events', () => {
 				signup_limit: 10,
 				signups: 5,
 				image_URL: 'https://media.timeout.com/images/106207035/750/422/image.jpg',
+				firstline_address: 'Hyde Park, Serpentine Rd, London',
 			});
 		});
 		test('200 - can apply multiple queries', async () => {
@@ -255,6 +258,8 @@ describe('/events', () => {
 				signup_limit: 30,
 				description: "Visit one of London's most exciting museums.",
 				organiser_id: 2,
+				firstline_address: 'Hyde Park, Serpentine Rd, London',
+				postcode: 'W2 2UH',
 			};
 			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
 			expect(response.status).toBe(201);
@@ -273,6 +278,8 @@ describe('/events', () => {
 				signup_limit: 30,
 				description: "Visit one of London's most exciting museums.",
 				organiser_id: 2,
+				firstline_address: 'Hyde Park, Serpentine Rd, London',
+				postcode: 'W2 2UH',
 			};
 			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
 			expect(response.status).toBe(400);
@@ -290,6 +297,8 @@ describe('/events', () => {
 				signup_limit: 30,
 				description: "Visit one of London's most exciting museums.",
 				organiser_id: 2,
+				firstline_address: 'Hyde Park, Serpentine Rd, London',
+				postcode: 'W2 2UH',
 			};
 			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
 			expect(response.status).toBe(400);
@@ -323,6 +332,8 @@ describe('/events', () => {
 				signup_limit: 'thirty',
 				description: "Visit one of London's most exciting museums.",
 				organiser_id: 2,
+				firstline_address: 'Hyde Park, Serpentine Rd, London',
+				postcode: 'W2 2UH',
 			};
 
 			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
@@ -343,6 +354,8 @@ describe('/events', () => {
 				description: "Visit one of London's most exciting museums.",
 				organiser_id: 2,
 				reviews: ['5 stars'],
+				firstline_address: 'Hyde Park, Serpentine Rd, London',
+				postcode: 'W2 2UH',
 			};
 
 			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
@@ -360,6 +373,8 @@ describe('/events', () => {
 				description: "Visit one of London's most exciting museums.",
 				organiser_id: 2,
 				event_id: expect.any(Number),
+				firstline_address: 'Hyde Park, Serpentine Rd, London',
+				postcode: 'W2 2UH',
 			});
 		});
 		test('400 - responds with error when price has incorrect format', async () => {
@@ -373,6 +388,8 @@ describe('/events', () => {
 				signup_limit: 30,
 				description: "Visit one of London's most exciting museums.",
 				organiser_id: 2,
+				firstline_address: 'Hyde Park, Serpentine Rd, London',
+				postcode: 'W2 2UH',
 			};
 
 			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
@@ -405,6 +422,8 @@ describe('/events/:event_id', () => {
 				signups: 2,
 				organiser_name: 'Lian',
 				organiser_email: 'lian@gmail.com',
+				firstline_address: 'Hyde Park, Serpentine Rd, London',
+				postcode: 'W2 2UH',
 			});
 		});
 		test('404 - responds with an error when the event does not exist', async () => {
@@ -431,7 +450,7 @@ describe('/events/:event_id', () => {
 			expect(data.message).toBe('404 - Event not found');
 		});
 	});
-	describe.only('PATCH', () => {
+	describe('PATCH', () => {
 		test('200 - responds with the updated event upon a successful patch', async () => {
 			const patchInfo = {
 				price: '30.00',
@@ -442,6 +461,8 @@ describe('/events/:event_id', () => {
 				description: 'Run around kew gardens and richmond',
 				signup_limit: 600,
 				image_URL: 'https://run-fest.com/wp-content/uploads/2022/08/3-1.jpg',
+				firstline_address: 'Kew Gardens',
+				postcode: 'WF45 8ET',
 			};
 			const response = await app.request('/events/1', { method: 'PATCH', body: JSON.stringify(patchInfo) });
 			expect(response.status).toBe(200);
@@ -458,6 +479,8 @@ describe('/events/:event_id', () => {
 				description: 'Run around kew gardens and richmond',
 				signup_limit: 600,
 				image_URL: 'https://run-fest.com/wp-content/uploads/2022/08/3-1.jpg',
+				firstline_address: 'Kew Gardens',
+				postcode: 'WF45 8ET',
 			});
 		});
 		test('200 - can patch with any number of fields', async () => {
@@ -477,6 +500,8 @@ describe('/events/:event_id', () => {
 				organiser_id: 2,
 				signup_limit: 10,
 				image_URL: 'https://media.timeout.com/images/106207035/750/422/image.jpg',
+				firstline_address: 'Hyde Park, Serpentine Rd, London',
+				postcode: 'W2 2UH',
 			});
 		});
 		test('200 - Ignores any additional fields', async () => {
@@ -496,6 +521,8 @@ describe('/events/:event_id', () => {
 				organiser_id: 2,
 				signup_limit: 10,
 				image_URL: 'https://media.timeout.com/images/106207035/750/422/image.jpg',
+				firstline_address: 'Hyde Park, Serpentine Rd, London',
+				postcode: 'W2 2UH',
 			});
 		});
 		test('400 - responds with an error for any incorrect data types (price)', async () => {

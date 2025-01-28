@@ -1,5 +1,5 @@
 {
-  "id": "f672f1ec-686f-452e-8b7b-cd2cfa9b8eec",
+  "id": "f8fda3a8-1607-4d2e-868f-711f982496ff",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -18,19 +18,19 @@
           "name": "event_name",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "event_date": {
           "name": "event_date",
           "type": "date",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "start_time": {
           "name": "start_time",
           "type": "time",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "end_time": {
           "name": "end_time",
@@ -42,7 +42,7 @@
           "name": "description",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "organiser_id": {
           "name": "organiser_id",
@@ -61,6 +61,24 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "price": {
+          "name": "price",
+          "type": "numeric(100, 2)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "postcode": {
+          "name": "postcode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "firstline_address": {
+          "name": "firstline_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -75,7 +93,7 @@
           "columnsTo": [
             "user_id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -93,13 +111,13 @@
           "name": "event_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},
@@ -114,7 +132,7 @@
           "columnsTo": [
             "event_id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "saved_events_user_id_users_user_id_fk": {
@@ -127,7 +145,7 @@
           "columnsTo": [
             "user_id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -145,13 +163,13 @@
           "name": "event_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "user_id": {
           "name": "user_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},
@@ -166,7 +184,7 @@
           "columnsTo": [
             "event_id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "sign_ups_user_id_users_user_id_fk": {
@@ -179,7 +197,7 @@
           "columnsTo": [
             "user_id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -221,7 +239,15 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {},
       "isRLSEnabled": false
