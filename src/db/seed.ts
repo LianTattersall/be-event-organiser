@@ -2,6 +2,10 @@ import { neon } from '@neondatabase/serverless';
 import { config } from 'dotenv';
 import { drizzle } from 'drizzle-orm/neon-http';
 import { events, saved_events, sign_ups, users } from './schema';
+//import userData from '../db/data/testData/users-test.json';
+//import eventData from '../db/data/testData/events-test.json';
+//import signupData from '../db/data/testData/signups-test.json';
+//import savedData from '../db/data/testData/saved-test.json';
 
 type User = {
 	name: string;
@@ -13,11 +17,14 @@ type Event = {
 	event_name: string;
 	event_date: string;
 	start_time: string;
-	end_time: string;
+	end_time?: string | undefined;
 	description: string;
 	organiser_id: number;
-	signup_limit: number;
+	signup_limit?: number;
 	event_id: number;
+	postcode: string;
+	firstline_address: string;
+	price: string;
 };
 
 type Signup = {
@@ -50,5 +57,7 @@ async function seed(data: SeedData) {
 	await db.insert(sign_ups).values(data.signups);
 	await db.insert(saved_events).values(data.saved);
 }
+
+//seed({ users: userData, saved: savedData, events: eventData, signups: signupData });
 
 export default seed;

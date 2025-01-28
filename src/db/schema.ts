@@ -20,6 +20,8 @@ export const events = pgTable('events', {
 	signup_limit: integer('signup_limit'),
 	image_URL: text('image_URL'),
 	price: numeric('price', { precision: 100, scale: 2 }),
+	postcode: text('postcode').notNull(),
+	firstline_address: text('firstline_address').notNull(),
 });
 
 export const saved_events = pgTable('saved_events', {

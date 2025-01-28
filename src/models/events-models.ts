@@ -47,6 +47,7 @@ export const fetchEvents = async (
 			image_URL: events.image_URL,
 			signup_limit: events.signup_limit,
 			price: events.price,
+			firstline_address: events.firstline_address,
 			signups: sql`CAST(COALESCE(COUNT(${sign_ups.user_id}), 0) AS INT)`,
 		})
 		.from(events)
@@ -111,15 +112,43 @@ interface Event {
 	signup_limit: number;
 	description: string;
 	organiser_id: number;
+	postcode: string;
+	firstline_address: string;
 }
 
 export const addEvent = async (connectionStr: string, eventToPost: Event) => {
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
-	const { event_name, event_date, start_time, end_time, price, image_URL, signup_limit, description, organiser_id } = eventToPost;
+	const {
+		event_name,
+		event_date,
+		start_time,
+		end_time,
+		price,
+		image_URL,
+		signup_limit,
+		description,
+		organiser_id,
+		postcode,
+		firstline_address,
+	} = eventToPost;
 	const posted = await db
 		.insert(events)
-		.values([{ event_name, event_date, start_time, end_time, price, image_URL, signup_limit, description, organiser_id }])
+		.values([
+			{
+				event_name,
+				event_date,
+				start_time,
+				end_time,
+				price,
+				image_URL,
+				signup_limit,
+				description,
+				organiser_id,
+				postcode,
+				firstline_address,
+			},
+		])
 		.returning();
 	return posted[0];
 };
