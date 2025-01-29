@@ -5,26 +5,26 @@ CREATE TABLE "events" (
 	"start_time" time NOT NULL,
 	"end_time" time,
 	"description" text NOT NULL,
-	"organiser_id" integer NOT NULL,
+	"organiser_id" text NOT NULL,
 	"signup_limit" integer,
 	"image_URL" text,
 	"price" numeric(100, 2),
-	"postcode" text,
-	"firstline_address" text
+	"postcode" text NOT NULL,
+	"firstline_address" text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "saved_events" (
 	"event_id" integer NOT NULL,
-	"user_id" integer NOT NULL
+	"user_id" text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "sign_ups" (
 	"event_id" integer NOT NULL,
-	"user_id" integer NOT NULL
+	"user_id" text NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "users" (
-	"user_id" serial PRIMARY KEY NOT NULL,
+	"user_id" text PRIMARY KEY NOT NULL,
 	"email" text,
 	"name" text,
 	"admin" boolean,

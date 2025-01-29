@@ -3,36 +3,36 @@
         "name": "Lian", 
         "email": "lian@gmail.com",
         "admin": true, 
-        "user_id": 1
+        "user_id": "1"
     },
     {
         "name": "Hanna", 
         "email": "Hanna@gmail.com",
         "admin": true,
-        "user_id": 2
+        "user_id": "2"
     },
     {
         "name": "Isobel", 
         "email": "Isobel@gmail.com",
         "admin": false,
-        "user_id": 3
+        "user_id": "3"
     },
     {
         "name": "Peter", 
         "email": "Peter@gmail.com",
         "admin": false,
-        "user_id": 4
+        "user_id": "4"
     },
     {
         "name": "Kerry", 
         "email": "Kerry@gmail.com",
         "admin": false,
-        "user_id": 5
+        "user_id": "5"
     },
     {
         "name": "Keith", 
         "email": "Keith@gmail.com",
         "admin": false,
-        "user_id": 6
+        "user_id": "6"
     }
 ]

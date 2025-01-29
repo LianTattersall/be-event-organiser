@@ -37,7 +37,7 @@ describe('/users/:user_id', () => {
 			const data = await response.json();
 			expect(data.user).toEqual({
 				name: expect.any(String),
-				user_id: expect.any(Number),
+				user_id: expect.any(String),
 				email: expect.any(String),
 				admin: expect.any(Boolean),
 			});
@@ -68,7 +68,7 @@ describe('/users/:user_id', () => {
 describe('/users', () => {
 	describe('POST', () => {
 		test('201 - responds with the user that was posted', async () => {
-			const postInfo = { name: 'Toffee', email: 'toffee@gmail.com', admin: false };
+			const postInfo = { name: 'Toffee', email: 'toffee@gmail.com', admin: false, user_id: '234GHT' };
 			const response = await app.request('/users', {
 				method: 'POST',
 				body: JSON.stringify(postInfo),
@@ -78,32 +78,32 @@ describe('/users', () => {
 			expect(data.user).toEqual(postInfo);
 		});
 		test('400 - responds with an error when the types are incorrect', async () => {
-			const postInfo = { name: 4, email: '4@gmail.com', admin: 'false' };
+			const postInfo = { name: 4, email: '4@gmail.com', admin: 'false', user_id: '@£HGTY' };
 			const response = await app.request('/users', { method: 'POST', body: JSON.stringify(postInfo) });
 			expect(response.status).toBe(400);
 			const data = await response.json();
 			expect(data.message).toBe('400 - Invalid data type on request body');
 		});
 		test('403 - responds with an error when a user with the same email already exists', async () => {
-			const postInfo = { name: 'Lian2', email: 'lian@gmail.com', admin: false };
+			const postInfo = { name: 'Lian2', email: 'lian@gmail.com', admin: false, user_id: '34grii' };
 			const response = await app.request('/users', { method: 'POST', body: JSON.stringify(postInfo) });
 			expect(response.status).toBe(403);
 			const data = await response.json();
 			expect(data.message).toBe('403 - Resource already exists');
 		});
 		test('400 - responds with an error when fields are missing', async () => {
-			const postInfo = { email: 'unknown@gmail.com' };
+			const postInfo = { email: 'unknown@gmail.com', admin: false, name: 'ghost' };
 			const response = await app.request('/users', { method: 'POST', body: JSON.stringify(postInfo) });
 			expect(response.status).toBe(400);
 			const data = await response.json();
 			expect(data.message).toBe('400 - Invalid data type on request body');
 		});
 		test('201 - Ignores extra fields on request body', async () => {
-			const postInfo = { name: 'Toffee', email: 'toffee@gmail.com', admin: false, age: 17 };
+			const postInfo = { name: 'Toffee', email: 'toffee@gmail.com', admin: false, age: 17, user_id: '234' };
 			const response = await app.request('/users', { method: 'POST', body: JSON.stringify(postInfo) });
 			expect(response.status).toBe(201);
 			const data = await response.json();
-			expect(data.user).toEqual({ name: 'Toffee', email: 'toffee@gmail.com', admin: false });
+			expect(data.user).toEqual({ name: 'Toffee', email: 'toffee@gmail.com', admin: false, user_id: '234' });
 		});
 	});
 });
@@ -257,7 +257,7 @@ describe('/events', () => {
 				image_URL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX7w2mn_cGck-it4SGUHPokp66b2yTB58DGQ&s',
 				signup_limit: 30,
 				description: "Visit one of London's most exciting museums.",
-				organiser_id: 2,
+				organiser_id: '2',
 				firstline_address: 'Hyde Park, Serpentine Rd, London',
 				postcode: 'W2 2UH',
 			};
@@ -277,7 +277,7 @@ describe('/events', () => {
 				image_URL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX7w2mn_cGck-it4SGUHPokp66b2yTB58DGQ&s',
 				signup_limit: 30,
 				description: "Visit one of London's most exciting museums.",
-				organiser_id: 2,
+				organiser_id: '2',
 				firstline_address: 'Hyde Park, Serpentine Rd, London',
 				postcode: 'W2 2UH',
 			};
@@ -352,7 +352,7 @@ describe('/events', () => {
 				image_URL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX7w2mn_cGck-it4SGUHPokp66b2yTB58DGQ&s',
 				signup_limit: 30,
 				description: "Visit one of London's most exciting museums.",
-				organiser_id: 2,
+				organiser_id: '2',
 				reviews: ['5 stars'],
 				firstline_address: 'Hyde Park, Serpentine Rd, London',
 				postcode: 'W2 2UH',
@@ -371,7 +371,7 @@ describe('/events', () => {
 				image_URL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX7w2mn_cGck-it4SGUHPokp66b2yTB58DGQ&s',
 				signup_limit: 30,
 				description: "Visit one of London's most exciting museums.",
-				organiser_id: 2,
+				organiser_id: '2',
 				event_id: expect.any(Number),
 				firstline_address: 'Hyde Park, Serpentine Rd, London',
 				postcode: 'W2 2UH',
@@ -416,7 +416,7 @@ describe('/events/:event_id', () => {
 				start_time: '10:00:00',
 				end_time: '18:00:00',
 				description: '26.2 miles of London',
-				organiser_id: 1,
+				organiser_id: '1',
 				signup_limit: 3000,
 				image_URL: 'https://www.londontravelwatch.org.uk/wp-content/uploads/2023/04/London-Marathon-cropped.png',
 				signups: 2,
@@ -470,7 +470,7 @@ describe('/events/:event_id', () => {
 			const data = await response.json();
 			expect(data.event).toEqual({
 				event_id: 1,
-				organiser_id: 1,
+				organiser_id: '1',
 				price: '30.00',
 				event_name: 'Richmond Marathon',
 				event_date: '2025-10-13',
@@ -497,7 +497,7 @@ describe('/events/:event_id', () => {
 				start_time: '12:00:00',
 				end_time: '18:00:00',
 				description: 'Food in alovely park',
-				organiser_id: 2,
+				organiser_id: '2',
 				signup_limit: 10,
 				image_URL: 'https://media.timeout.com/images/106207035/750/422/image.jpg',
 				firstline_address: 'Hyde Park, Serpentine Rd, London',
@@ -518,7 +518,7 @@ describe('/events/:event_id', () => {
 				start_time: '12:00:00',
 				end_time: '18:00:00',
 				description: 'Food in alovely park',
-				organiser_id: 2,
+				organiser_id: '2',
 				signup_limit: 10,
 				image_URL: 'https://media.timeout.com/images/106207035/750/422/image.jpg',
 				firstline_address: 'Hyde Park, Serpentine Rd, London',
@@ -728,15 +728,7 @@ describe('/users/:user_id/saved', () => {
 			expect(response.status).toBe(201);
 
 			const data = await response.json();
-			expect(data.saved).toEqual({ user_id: 6, event_id: 3 });
-		});
-		test('400 - responds with an error when id is incorrect data type', async () => {
-			const postInfo = { event_id: 3 };
-			const response = await app.request('/users/lian/saved', { method: 'POST', body: JSON.stringify(postInfo) });
-			expect(response.status).toBe(400);
-
-			const data = await response.json();
-			expect(data.message).toBe('400 - Invalid data type');
+			expect(data.saved).toEqual({ user_id: '6', event_id: 3 });
 		});
 		test('400 - responds with an error when id is incorrect data type', async () => {
 			const postInfo = { event_id: 'hello' };
@@ -917,15 +909,7 @@ describe('/users/:user_id/signups', () => {
 			expect(response.status).toBe(201);
 
 			const data = await response.json();
-			expect(data.signup).toEqual({ user_id: 6, event_id: 8 });
-		});
-		test('400 - responds with an error when id is incorrect data type', async () => {
-			const postInfo = { event_id: 8 };
-			const response = await app.request('/users/lian/signups', { method: 'POST', body: JSON.stringify(postInfo) });
-			expect(response.status).toBe(400);
-
-			const data = await response.json();
-			expect(data.message).toBe('400 - Invalid data type');
+			expect(data.signup).toEqual({ user_id: '6', event_id: 8 });
 		});
 		test('400 - responds with an error when id is incorrect data type', async () => {
 			const postInfo = { event_id: 'hello' };
@@ -989,7 +973,7 @@ describe('/users/:user_id/signups', () => {
 			expect(response.status).toBe(201);
 
 			const data = await response.json();
-			expect(data.signup).toEqual({ user_id: 6, event_id: 10 });
+			expect(data.signup).toEqual({ user_id: '6', event_id: 10 });
 		});
 	});
 });

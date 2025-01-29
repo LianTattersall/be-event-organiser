@@ -31,28 +31,28 @@ export function signedUpUserSearch<T extends PgSelect>(qb: T, searchTerm: string
 	);
 }
 
-export function currSignups<T extends PgSelect>(qb: T, user_id: number) {
+export function currSignups<T extends PgSelect>(qb: T, user_id: string) {
 	const date = new Date();
 	return qb.where(
 		and(eq(sign_ups.user_id, user_id), gt(events.event_date, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`))
 	);
 }
 
-export function pastSignups<T extends PgSelect>(qb: T, user_id: number) {
+export function pastSignups<T extends PgSelect>(qb: T, user_id: string) {
 	const date = new Date();
 	return qb.where(
 		and(eq(sign_ups.user_id, user_id), lt(events.event_date, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`))
 	);
 }
 
-export function currSaved<T extends PgSelect>(qb: T, user_id: number) {
+export function currSaved<T extends PgSelect>(qb: T, user_id: string) {
 	const date = new Date();
 	return qb.where(
 		and(eq(saved_events.user_id, user_id), gt(events.event_date, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`))
 	);
 }
 
-export function pastSaved<T extends PgSelect>(qb: T, user_id: number) {
+export function pastSaved<T extends PgSelect>(qb: T, user_id: string) {
 	const date = new Date();
 	return qb.where(
 		and(eq(saved_events.user_id, user_id), lt(events.event_date, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`))

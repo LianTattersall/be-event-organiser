@@ -5,7 +5,7 @@
     },
     "POST /users": {
         "description": "Posts a users details to the database", 
-        "requestFormat": {"email":"lian@gmail.com","name":"Lian","admin":true},
+        "requestFormat": {"email":"lian@gmail.com","name":"Lian","admin":true, "user_id": "ASDKinn876GH"},
         "exampleResponse": {"email":"lian@gmail.com","name":"Lian","admin":true}, 
         "notes": "Request body can accept extra fields"
     },
