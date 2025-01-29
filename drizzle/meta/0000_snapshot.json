@@ -1,5 +1,5 @@
 {
-  "id": "f8fda3a8-1607-4d2e-868f-711f982496ff",
+  "id": "442045ce-de09-4ad3-bc50-72180578b672",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -46,7 +46,7 @@
         },
         "organiser_id": {
           "name": "organiser_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -72,13 +72,13 @@
           "name": "postcode",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "firstline_address": {
           "name": "firstline_address",
           "type": "text",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         }
       },
       "indexes": {},
@@ -115,7 +115,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         }
@@ -167,7 +167,7 @@
         },
         "user_id": {
           "name": "user_id",
-          "type": "integer",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         }
@@ -213,7 +213,7 @@
       "columns": {
         "user_id": {
           "name": "user_id",
-          "type": "serial",
+          "type": "text",
           "primaryKey": true,
           "notNull": true
         },

@@ -16,7 +16,7 @@ import { HTTPException } from 'hono/http-exception';
 
 export const getUserById = async (c: Context<{ Bindings: Env }>) => {
 	const user_id = c.req.param('user_id');
-	const user = await fetchUserById(Number(user_id), connectionStr(c)!);
+	const user = await fetchUserById(user_id, connectionStr(c)!);
 	return c.json({ user });
 };
 
@@ -28,7 +28,7 @@ export const postUser = async (c: Context<{ Bindings: Env }>) => {
 
 export const deleteUserById = async (c: Context<{ Bindings: Env }>) => {
 	const user_id = c.req.param('user_id');
-	await removeUserById(Number(user_id), connectionStr(c)!);
+	await removeUserById(user_id, connectionStr(c)!);
 	return c.body(null, 204);
 };
 
@@ -38,14 +38,14 @@ export const getSignupsByUserId = async (c: Context<{ Bindings: Env }>) => {
 	const p = c.req.query('p') ? Number(c.req.query('p')) : 1;
 	const type = c.req.query('type') || '';
 
-	const signups = await fetchSignupsByUserId(connectionStr(c)!, Number(user_id), Number(limit), Number(p), type);
+	const signups = await fetchSignupsByUserId(connectionStr(c)!, user_id, Number(limit), Number(p), type);
 	return c.json({ signups });
 };
 
 export const postSignupByUserId = async (c: Context<{ Bindings: Env }>) => {
 	const user_id = c.req.param('user_id');
 	const { event_id } = await c.req.json();
-	const signup = await addSignupByUserId(connectionStr(c)!, Number(user_id), event_id);
+	const signup = await addSignupByUserId(connectionStr(c)!, user_id, event_id);
 	return c.json({ signup }, 201);
 };
 
@@ -53,7 +53,7 @@ export const deleteSignup = async (c: Context<{ Bindings: Env }>) => {
 	const user_id = c.req.param('user_id');
 	const event_id = c.req.param('event_id');
 
-	await removeSignup(connectionStr(c)!, Number(user_id), Number(event_id));
+	await removeSignup(connectionStr(c)!, user_id, Number(event_id));
 
 	return c.body(null, 204);
 };
@@ -64,14 +64,14 @@ export const getSavedByUserId = async (c: Context<{ Bindings: Env }>) => {
 	const p = c.req.query('p') ? Number(c.req.query('p')) : 1;
 	const type = c.req.query('type') || '';
 
-	const saved = await fetchSavedByUserId(connectionStr(c)!, Number(user_id), Number(limit), Number(p), type);
+	const saved = await fetchSavedByUserId(connectionStr(c)!, user_id, Number(limit), Number(p), type);
 	return c.json({ saved });
 };
 
 export const postSavedByUserId = async (c: Context<{ Bindings: Env }>) => {
 	const user_id = c.req.param('user_id');
 	const { event_id } = await c.req.json();
-	const saved = await addSavedByUserId(connectionStr(c)!, Number(user_id), event_id);
+	const saved = await addSavedByUserId(connectionStr(c)!, user_id, event_id);
 	return c.json({ saved }, 201);
 };
 
@@ -79,7 +79,7 @@ export const deleteSaved = async (c: Context<{ Bindings: Env }>) => {
 	const user_id = c.req.param('user_id');
 	const event_id = c.req.param('event_id');
 
-	await removeSaved(connectionStr(c)!, Number(user_id), Number(event_id));
+	await removeSaved(connectionStr(c)!, user_id, Number(event_id));
 
 	return c.body(null, 204);
 };

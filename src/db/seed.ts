@@ -11,6 +11,7 @@ type User = {
 	name: string;
 	email: string;
 	admin: boolean;
+	user_id: string;
 };
 
 type Event = {
@@ -19,7 +20,7 @@ type Event = {
 	start_time: string;
 	end_time?: string | undefined;
 	description: string;
-	organiser_id: number;
+	organiser_id: string;
 	signup_limit?: number;
 	event_id: number;
 	postcode: string;
@@ -28,7 +29,7 @@ type Event = {
 };
 
 type Signup = {
-	user_id: number;
+	user_id: string;
 	event_id: number;
 };
 

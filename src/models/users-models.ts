@@ -5,9 +5,9 @@ import { and, asc, eq, sql } from 'drizzle-orm';
 import { HTTPException } from 'hono/http-exception';
 import { currSaved, currSignups, pastSaved, pastSignups } from './query-builder';
 
-type User = { name: string; email: string; admin: boolean };
+type User = { name: string; email: string; admin: boolean; user_id: string };
 
-export const fetchUserById = async (user_id: number, connectionStr: string) => {
+export const fetchUserById = async (user_id: string, connectionStr: string) => {
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
 	const user_data = await db.select().from(users).where(eq(users.user_id, user_id));
@@ -18,26 +18,27 @@ export const fetchUserById = async (user_id: number, connectionStr: string) => {
 };
 
 export const addUser = async (userDetails: User, connectionStr: string) => {
-	const { name, email, admin } = userDetails;
-	if (!(typeof name == 'string' && typeof email == 'string' && typeof admin == 'boolean')) {
+	const { name, email, admin, user_id } = userDetails;
+	if (!(typeof name == 'string' && typeof email == 'string' && typeof admin == 'boolean' && typeof user_id == 'string')) {
 		throw new HTTPException(400, { message: '400 - Invalid data type on request body' });
 	}
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
-	await db.insert(users).values({ name, email, admin });
-	return { name, email, admin };
+	await db.insert(users).values({ name, email, admin, user_id });
+	return { name, email, admin, user_id };
 };
 
-export const removeUserById = async (user_id: number, connectionStr: string) => {
+export const removeUserById = async (user_id: string, connectionStr: string) => {
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
 	const data = await db.delete(users).where(eq(users.user_id, user_id)).returning();
+
 	if (data.length === 0) {
 		throw new HTTPException(404, { message: '404 - User not found' });
 	}
 };
 
-export const fetchSignupsByUserId = async (connectionStr: string, user_id: number, limit: number, p: number, type: string) => {
+export const fetchSignupsByUserId = async (connectionStr: string, user_id: string, limit: number, p: number, type: string) => {
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
 
@@ -82,7 +83,7 @@ export const fetchSignupsByUserId = async (connectionStr: string, user_id: numbe
 	return signups.where(eq(sign_ups.user_id, user_id));
 };
 
-export const addSignupByUserId = async (connectionStr: string, user_id: number, event_id: number) => {
+export const addSignupByUserId = async (connectionStr: string, user_id: string, event_id: number) => {
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
 
@@ -117,7 +118,7 @@ export const addSignupByUserId = async (connectionStr: string, user_id: number, 
 	return { user_id, event_id };
 };
 
-export const removeSignup = async (connectionStr: string, user_id: number, event_id: number) => {
+export const removeSignup = async (connectionStr: string, user_id: string, event_id: number) => {
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
 
@@ -131,7 +132,7 @@ export const removeSignup = async (connectionStr: string, user_id: number, event
 	}
 };
 
-export const fetchSavedByUserId = async (connectionStr: string, user_id: number, limit: number, p: number, type: string) => {
+export const fetchSavedByUserId = async (connectionStr: string, user_id: string, limit: number, p: number, type: string) => {
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
 
@@ -176,7 +177,7 @@ export const fetchSavedByUserId = async (connectionStr: string, user_id: number,
 	return savedEvents.where(eq(saved_events.user_id, user_id));
 };
 
-export const addSavedByUserId = async (connectionStr: string, user_id: number, event_id: number) => {
+export const addSavedByUserId = async (connectionStr: string, user_id: string, event_id: number) => {
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
 
@@ -192,7 +193,7 @@ export const addSavedByUserId = async (connectionStr: string, user_id: number, e
 	return { user_id, event_id };
 };
 
-export const removeSaved = async (connectionStr: string, user_id: number, event_id: number) => {
+export const removeSaved = async (connectionStr: string, user_id: string, event_id: number) => {
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
 
