@@ -6,6 +6,7 @@ import userData from '../src/db/data/testData/users-test.json';
 import eventData from '../src/db/data/testData/events-test.json';
 import signupData from '../src/db/data/testData/signups-test.json';
 import savedData from '../src/db/data/testData/saved-test.json';
+import externalData from '../src/db/data/testData/external-test.json';
 
 /*beforeAll(() => {
 	config({
@@ -14,7 +15,7 @@ import savedData from '../src/db/data/testData/saved-test.json';
 });*/
 
 beforeEach(async () => {
-	await seed({ users: userData, events: eventData, signups: signupData, saved: savedData });
+	await seed({ users: userData, events: eventData, signups: signupData, saved: savedData, external: externalData });
 });
 
 describe('/', () => {
@@ -1097,6 +1098,86 @@ describe('/events/organiser/:orgnaniser_id', () => {
 				signups: expect.any(Number),
 				price: expect.any(String),
 			});
+		});
+	});
+});
+
+describe('/externalEvents/:user_id', () => {
+	describe('GET', () => {
+		test('200 - responds with the saved event_ids that the user has', async () => {
+			const response = await app.request('/externalEvents/1');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.events.length).toBe(1);
+			expect(data.events[0]).toEqual({ event_id: '1kuYvO3_GA1qo09' });
+		});
+		test('200 - responds with the saved event_ids that the user has (empty if there are none)', async () => {
+			const response = await app.request('/externalEvents/5');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.events).toEqual([]);
+		});
+		test('404 - responds with an error when the user does not exist', async () => {
+			const response = await app.request('/externalEvents/500000');
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toBe('404 - User not found');
+		});
+	});
+	describe('POST', () => {
+		test('201 - responds with the successfully created entry', async () => {
+			const postInfo = { event_id: '123dft56' };
+			const response = await app.request('/externalEvents/1', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(201);
+
+			const data = await response.json();
+			expect(data.saved).toEqual({ event_id: '123dft56', user_id: '1' });
+		});
+		test('400 - responds with an error when no event_id provided', async () => {
+			const postInfo = { event: '123dft56' };
+			const response = await app.request('/externalEvents/1', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toBe('400 - Missing information on request body');
+		});
+		test('404 - responds with an error when the user does not exist', async () => {
+			const postInfo = { event: '123dft56' };
+			const response = await app.request('/externalEvents/100000', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toBe('404 - User not found');
+		});
+		test('403 - responds with an error when the entry already exists', async () => {
+			const postInfo = { event_id: '1kuYvO3_GA1qo09' };
+			const response = await app.request('/externalEvents/1', { method: 'POST', body: JSON.stringify(postInfo) });
+			expect(response.status).toBe(403);
+
+			const data = await response.json();
+			expect(data.message).toBe('403 - Resource already exists');
+		});
+	});
+});
+
+describe('/events/:user_id/:event_id', () => {
+	describe.only('GET', () => {
+		test('204 - empty response body upon successfull deletion', async () => {
+			const response = await app.request('/externalEvents/1/1kuYvO3_GA1qo09', { method: 'DELETE' });
+			expect(response.status).toBe(204);
+
+			const data = response.body;
+			expect(data).toBe(null);
+		});
+		test('404 - responds with an error when the entry cannot be found', async () => {
+			const response = await app.request('/externalEvents/1/1kuY_GA1qo09', { method: 'DELETE' });
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toBe('404 - Saved event not found');
 		});
 	});
 });

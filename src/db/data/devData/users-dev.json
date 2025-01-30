@@ -1,0 +1,104 @@
+[
+    {
+        "user_id": "1",
+        "name": "Jack",
+        "email": "jack@gmail.com",
+        "admin": false
+    },
+    {
+        "user_id": "2",
+        "name": "Linda",
+        "email": "linda@gmail.com",
+        "admin": true
+    },
+    {
+        "user_id": "3",
+        "name": "Minah",
+        "email": "minah@gmail.com",
+        "admin": true
+    },
+    {
+        "user_id": "4",
+        "name": "Armani",
+        "email": "armani@gmail.com",
+        "admin": true
+    },
+    {
+        "user_id": "5",
+        "name": "leanne",
+        "email": "leanne@gmail.com",
+        "admin": false
+    },
+    {
+        "user_id": "6",
+        "name": "alex",
+        "email": "alex@gmail.com",
+        "admin": false
+    },
+    {
+        "user_id": "7",
+        "name": "leon",
+        "email": "leon@gmail.com",
+        "admin": false
+    },
+    {
+        "user_id": "8",
+        "name": "fozia",
+        "email": "fozia@gmail.com",
+        "admin": false
+    },
+    {
+        "user_id": "9",
+        "name": "claudia",
+        "email": "claudia@gmail.com",
+        "admin": true
+    },
+    {
+        "user_id": "10",
+        "name": "jake",
+        "email": "jake@gmail.com",
+        "admin": false
+    },
+    {
+        "user_id": "11",
+        "name": "yin",
+        "email": "yin@gmail.com",
+        "admin": false
+    },
+    {
+        "user_id": "12",
+        "name": "livi",
+        "email": "livi@gmail.com",
+        "admin": false
+    },
+    {
+        "user_id": "13",
+        "name": "lisa",
+        "email": "lisa@gmail.com",
+        "admin": false
+    },
+    {
+        "user_id": "14",
+        "name": "frankie",
+        "email": "frankie@gmail.com",
+        "admin": false
+    },
+    {
+        "user_id": "15",
+        "name": "ellen",
+        "email": "ellen@gmail.com",
+        "admin": false
+    },
+    {
+        "user_id": "16",
+        "name": "freddie",
+        "email": "freddie@gmail.com",
+        "admin": true
+    },
+    {
+        "user_id": "17",
+        "name": "dan",
+        "email": "dan@gmail.com",
+        "admin": false
+    }
+]
