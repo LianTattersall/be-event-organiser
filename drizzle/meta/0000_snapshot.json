@@ -1,5 +1,5 @@
 {
-  "id": "442045ce-de09-4ad3-bc50-72180578b672",
+  "id": "a2de61aa-2c2a-4fe5-93eb-c821afe62e3b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -89,6 +89,45 @@
           "tableTo": "users",
           "columnsFrom": [
             "organiser_id"
+          ],
+          "columnsTo": [
+            "user_id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.external_saved": {
+      "name": "external_saved",
+      "schema": "",
+      "columns": {
+        "event_id": {
+          "name": "event_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "name": "user_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "external_saved_user_id_users_user_id_fk": {
+          "name": "external_saved_user_id_users_user_id_fk",
+          "tableFrom": "external_saved",
+          "tableTo": "users",
+          "columnsFrom": [
+            "user_id"
           ],
           "columnsTo": [
             "user_id"

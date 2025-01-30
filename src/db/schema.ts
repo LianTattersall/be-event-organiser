@@ -41,3 +41,10 @@ export const sign_ups = pgTable('sign_ups', {
 		.references(() => users.user_id, { onDelete: 'cascade' })
 		.notNull(),
 });
+
+export const external_saved = pgTable('external_saved', {
+	event_id: text('event_id').notNull(),
+	user_id: text('user_id')
+		.references(() => users.user_id, { onDelete: 'cascade' })
+		.notNull(),
+});

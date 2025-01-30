@@ -13,6 +13,11 @@ CREATE TABLE "events" (
 	"firstline_address" text NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "external_saved" (
+	"event_id" text NOT NULL,
+	"user_id" text NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "saved_events" (
 	"event_id" integer NOT NULL,
 	"user_id" text NOT NULL
@@ -32,6 +37,7 @@ CREATE TABLE "users" (
 );
 --> statement-breakpoint
 ALTER TABLE "events" ADD CONSTRAINT "events_organiser_id_users_user_id_fk" FOREIGN KEY ("organiser_id") REFERENCES "public"."users"("user_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "external_saved" ADD CONSTRAINT "external_saved_user_id_users_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("user_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "saved_events" ADD CONSTRAINT "saved_events_event_id_events_event_id_fk" FOREIGN KEY ("event_id") REFERENCES "public"."events"("event_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "saved_events" ADD CONSTRAINT "saved_events_user_id_users_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("user_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "sign_ups" ADD CONSTRAINT "sign_ups_event_id_events_event_id_fk" FOREIGN KEY ("event_id") REFERENCES "public"."events"("event_id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
