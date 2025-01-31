@@ -6,7 +6,6 @@ export const getTicketMaster = async (c: Context<{ Bindings: Env }>) => {
 	let requestStr = `https://app.ticketmaster.com/discovery/v2`;
 
 	const path = c.req.routePath.split('/');
-	console.log(path);
 
 	for (let i = 2; i < path.length; i++) {
 		if (c.req.param(path[i].slice(1, path[i].length))) {
@@ -16,10 +15,10 @@ export const getTicketMaster = async (c: Context<{ Bindings: Env }>) => {
 		}
 	}
 
-	requestStr += '?';
+	requestStr += `?apikey=${c.env.TICKET_MASTER_KEY}`;
 	const queries = c.req.queries();
 	for (const key in queries) {
-		requestStr += `${key}=${queries[key][0]}&`;
+		requestStr += `&${key}=${queries[key][0]}`;
 	}
 
 	const data = await axios.get(requestStr);
