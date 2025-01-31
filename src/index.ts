@@ -3,13 +3,14 @@ import endpoints from './endpoints.json';
 import users_routes from './routes/users-routes';
 import { HTTPException } from 'hono/http-exception';
 import { NeonDbError } from '@neondatabase/serverless';
-import { ContentlessStatusCode } from 'hono/utils/http-status';
 import events_routes from './routes/events-routes';
 import external_routes from './routes/external-routes';
+import ticketMaster_routes from './routes/ticketMaster-routes';
 
 export type Env = {
 	DATABASE_URL: string;
 	DATABASE_URL_TEST: string;
+	TICKET_MASTER_KEY: string;
 };
 
 const app = new Hono<{ Bindings: Env }>();
@@ -23,6 +24,8 @@ app.route('/users', users_routes);
 app.route('/events', events_routes);
 
 app.route('/externalEvents', external_routes);
+
+app.route('/ticketMaster', ticketMaster_routes);
 
 app.onError((err, c) => {
 	if (err instanceof HTTPException) {
