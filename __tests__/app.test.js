@@ -805,6 +805,29 @@ describe('/users/:user_id/saved/:event_id', () => {
 			expect(data.message).toBe('404 - Resource not found');
 		});
 	});
+	describe('GET', () => {
+		test('200 - returns the saved event_id', async () => {
+			const response = await app.request('/users/1/saved/3');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.saved).toEqual({ user_id: '1', event_id: 3 });
+		});
+		test('404 - responds with an error when the entry is not found', async () => {
+			const response = await app.request('/users/1000000/saved/1');
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toEqual('404 - Resource not found');
+		});
+		test('400 - responds with an error when the event id is not a number', async () => {
+			const response = await app.request('/users/1000000/saved/1sdf');
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toEqual('400 - Invalid data type');
+		});
+	});
 });
 
 describe('/users/:user_id/signups', () => {
@@ -1010,6 +1033,29 @@ describe('/users/:user_id/signups/:event_id', () => {
 			expect(data.message).toBe('404 - Resource not found');
 		});
 	});
+	describe('GET', () => {
+		test('200 - returns the saved event_id', async () => {
+			const response = await app.request('/users/1/signups/1');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.signup).toEqual({ user_id: '1', event_id: 1 });
+		});
+		test('404 - responds with an error when the entry is not found', async () => {
+			const response = await app.request('/users/1000000/signups/1');
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toEqual('404 - Resource not found');
+		});
+		test('400 - responds with an error when the event id is not a number', async () => {
+			const response = await app.request('/users/1000000/signups/1sdf');
+			expect(response.status).toBe(400);
+
+			const data = await response.json();
+			expect(data.message).toEqual('400 - Invalid data type');
+		});
+	});
 });
 
 describe('/events/organiser/:orgnaniser_id', () => {
@@ -1118,7 +1164,7 @@ describe('/events/organiser/:orgnaniser_id', () => {
 
 describe('/externalEvents/:user_id', () => {
 	describe('GET', () => {
-		test('200 - responds with the saved event_ids that the user has', async () => {
+		test('200 - responds with the signups event_ids that the user has', async () => {
 			const response = await app.request('/externalEvents/1');
 			expect(response.status).toBe(200);
 
@@ -1177,8 +1223,8 @@ describe('/externalEvents/:user_id', () => {
 	});
 });
 
-describe('/events/:user_id/:event_id', () => {
-	describe('GET', () => {
+describe('/externalEvents/:user_id/:event_id', () => {
+	describe('DELETE', () => {
 		test('204 - empty response body upon successfull deletion', async () => {
 			const response = await app.request('/externalEvents/1/1kuYvO3_GA1qo09', { method: 'DELETE' });
 			expect(response.status).toBe(204);
@@ -1192,6 +1238,22 @@ describe('/events/:user_id/:event_id', () => {
 
 			const data = await response.json();
 			expect(data.message).toBe('404 - Saved event not found');
+		});
+	});
+	describe('GET', () => {
+		test('200 - returns the saved event_id', async () => {
+			const response = await app.request('/externalEvents/1/1kuYvO3_GA1qo09');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.saved).toEqual({ user_id: '1', event_id: '1kuYvO3_GA1qo09' });
+		});
+		test('404 - responds with an error when the entry is not found', async () => {
+			const response = await app.request('/externalEvents/1000000/1kuYvO3_GA1qo09');
+			expect(response.status).toBe(404);
+
+			const data = await response.json();
+			expect(data.message).toEqual('404 - Resource not found');
 		});
 	});
 });
