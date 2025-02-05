@@ -18,32 +18,37 @@
         "queries": ["p - page number (default 1)" , "limit - number of events in array (default 10)", "type - can be 'current' or 'all'. 'current' filters out past events and events that have reached the signup limit" , "searchTerm - filters events by a searchTerm", "sortby - Can be date, price, or id", "orderby - Can be asc or desc"],
         "exampleResponse": [{
             "event_id": 1,
-            "event_name": "London Marathon",
-            "event_date": "2025-04-01",
-            "start_time": "10:00:00",
-            "end_time": "18:00:00",
-            "image_URL": "https://www.londontravelwatch.org.uk/wp-content/uploads/2023/04/London-Marathon-cropped.png",
-            "signup_limit": 3000,
-            "price": "10.00",
-            "signups": 2
+            "event_name": "Stargazing Night at Greenwich Observatory",
+            "event_date": "2025-09-25",
+            "start_time": "21:00:00",
+            "end_time": "23:30:00",
+            "image_URL": "https://www.rmg.co.uk/sites/default/files/styles/full_width_1440/public/2020-11/L5527-005%201224%20x%20480px.jpg?itok=4doNCV35",
+            "signup_limit": 15,
+            "price": "22.00",
+            "firstline_address": "Royal Observatory, Greenwich, London",
+            "signups": 6,
+            "image_description": "people lying in seats watching the ceiling displaying the night sky"
           }]
     },
     "GET /events/:event_id": {
         "description": "Responds with all the event info for the event with the corresponding ID",
         "exampleResponse": {
-            "event_id": 3,
-            "event_name": "Visit to NASA",
-            "event_date": "2025-03-01",
-            "start_time": "08:00:00",
-            "end_time": "17:00:00",
-            "description": "Get an exclusive tour of NASA",
-            "organiser_id": 1,
-            "signup_limit": 3,
-            "image_URL": "https://d1o72l87sylvqg.cloudfront.net/blue-origin/webheader_bluemoon.png",
-            "price": "9.00",
-            "signups": 3,
-            "organiser_name": "Lian",
-            "organiser_email": "lian@gmail.com"
+            "event_id": 1,
+            "event_name": "Stargazing Night at Greenwich Observatory",
+            "event_date": "2025-09-25",
+            "start_time": "21:00:00",
+            "end_time": "23:30:00",
+            "description": "Experience the wonders of the night sky with expert astronomers.",
+            "organiser_id": "10300968467948814",
+            "signup_limit": 15,
+            "image_URL": "https://www.rmg.co.uk/sites/default/files/styles/full_width_1440/public/2020-11/L5527-005%201224%20x%20480px.jpg?itok=4doNCV35",
+            "price": "22.00",
+            "postcode": "SE10 8XJ",
+            "image_description": "people lying in seats watching the ceiling displaying the night sky",
+            "firstline_address": "Royal Observatory, Greenwich, London",
+            "signups": 6,
+            "organiser_name": "Lian Tattersall",
+            "organiser_email": "liangmail.com"
           }
     },
     "DELETE /events/:event_id": {
@@ -52,27 +57,33 @@
     "POST /events": {
         "description": "Adds an event to the events table in the db", 
         "requestFormat": {
-            "price": 9.00,
-            "event_name": "Visit to NASA",
-            "event_date": "2025-03-01",
-            "start_time": "08:00:00",
-            "end_time": "17:00:00",
-            "description": "Get an exclusive tour of NASA",
-            "organiser_id": 1,
-            "signup_limit": 3,
-            "image_URL": "https://d1o72l87sylvqg.cloudfront.net/blue-origin/webheader_bluemoon.png"
+            "event_name": "Trip to Science Museum",
+            "event_date": "2025-04-23",
+            "start_time": "09:00:00",
+            "end_time": "14:00:00",
+            "price": "0.00",
+            "image_URL": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX7w2mn_cGck-it4SGUHPokp66b2yTB58DGQ&s",
+            "signup_limit": 30,
+            "description": "Visit one of London's most exciting museums.",
+            "organiser_id": "2",
+            "firstline_address": "Hyde Park, Serpentine Rd, London",
+            "postcode": "W2 2UH",
+            "image_description": "A picture of a mathematical sculpture with spectators observing"
         },
         "exampleResponse" : {
             "event_id": 3,
-            "price": 9.00,
-            "event_name": "Visit to NASA",
-            "event_date": "2025-03-01",
-            "start_time": "08:00:00",
-            "end_time": "17:00:00",
-            "description": "Get an exclusive tour of NASA",
-            "organiser_id": 1,
-            "signup_limit": 3,
-            "image_URL": "https://d1o72l87sylvqg.cloudfront.net/blue-origin/webheader_bluemoon.png"
+            "event_name": "Trip to Science Museum",
+            "event_date": "2025-04-23",
+            "start_time": "09:00:00",
+            "end_time": "14:00:00",
+            "price": "0.00",
+            "image_URL": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSX7w2mn_cGck-it4SGUHPokp66b2yTB58DGQ&s",
+            "signup_limit": 30,
+            "description": "Visit one of London's most exciting museums.",
+            "organiser_id": "2",
+            "firstline_address": "Hyde Park, Serpentine Rd, London",
+            "postcode": "W2 2UH",
+            "image_description": "A picture of a mathematical sculpture with spectators observing"
         },
         "notes": "price, image_URL, end_time, signup_limit can be null. Request body ignores any additional fields."
     },
@@ -144,5 +155,29 @@
             "signups": 9,
             "price": "0.00"
         }]
+    },
+    "GET /externalEvents/:user_id": {
+        "description": "responds with an array of event id's that the user has saved from the ticket master api",
+        "exampleResponse": [{"event_id": "123lkhlkhlw"}]
+    },
+    "POST /externalEvents/:user_id": {
+        "description": "Posts an event_id to be saved for the specified user",
+        "requestFormat":  { "event_id": "123dft56" },
+        "exampleResponse": { "event_id": "123dft56", "user_id": "1" }
+    },
+    "DELETE /externalEvents/:user_id/:event_id": {
+        "description": "deletes an event id from the users profile"
+    },
+    "GET /users/:user_id/saved/:event_id": {
+        "description": "responds with the saved event for the user if it exists (used to check whether a user has saved this event)",
+        "exampleResponse": {"user_id": "34" , "event_id": 5}
+    },
+    "GET /users/:user_id/signups/:event_id": {
+        "description": "responds with the signed up event for the user if it exists (used to check whether a user has signed up for this event)",
+        "exampleResponse": {"user_id": "34" , "event_id": 5}
+    },
+    "GET /externalEvents/:user_id/:event_id": {
+        "description": "responds with the external saved event for the user if it exists (used to check whether a user has saved this event)",
+        "exampleResponse": {"user_id": "34" , "event_id": "wwervv522s"}
     }
 }
