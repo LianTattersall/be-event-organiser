@@ -11,7 +11,9 @@
         "signup_limit": 15,
         "image_URL": "https://www.rmg.co.uk/sites/default/files/styles/full_width_1440/public/2020-11/L5527-005%201224%20x%20480px.jpg?itok=4doNCV35",
         "firstline_address": "Royal Observatory, Greenwich, London",
-        "postcode": "SE10 8XJ"
+        "postcode": "SE10 8XJ",
+        "image_description": "People looking at the ceiling which is showing the night sky"
+
     },
     {
         "price": "12.20",
@@ -25,7 +27,8 @@
         "signup_limit": 10,
         "image_URL": "https://media.timeout.com/images/106207035/750/422/image.jpg",
         "firstline_address": "Hyde Park, Serpentine Rd, London",
-        "postcode": "W2 2UH"
+        "postcode": "W2 2UH",
+        "image_description": "A picture of a park on a sunny day with people walking"
     },
     {
         "price": "15.50",
@@ -39,7 +42,8 @@
         "signup_limit": 50,
         "image_URL": "https://cdn.britannica.com/29/123929-050-3C1F0AEA/Joe-Oliver-Creole-Jazz-Band-Chicago-1923.jpg",
         "firstline_address": "32 London Bridge St, London",
-        "postcode": "SE1 9SG"
+        "postcode": "SE1 9SG",
+        "image_description": "A black and white image of a band with a variety of instruments"
     },
     {
         "price": "8.00",
@@ -53,7 +57,8 @@
         "signup_limit": 20,
         "image_URL": "https://media.npr.org/assets/img/2012/02/06/istock_000016611276small-6752354d634e040546880e4f50cb4af3c59626e5.jpg?s=800&c=85&f=jpeg",
         "firstline_address": "Southbank Centre, London",
-        "postcode": "SE1 8XX"
+        "postcode": "SE1 8XX",
+        "image_description": "A row of people doing the same lunging post behind the sunset"
     },
     {
         "price": "25.00",
@@ -67,7 +72,8 @@
         "signup_limit": 15,
         "image_URL": "https://t4.ftcdn.net/jpg/03/32/75/39/360_F_332753934_tBacXEgxnVplFBRyKbCif49jh0Wz89ns.jpg",
         "firstline_address": "The Culinary School, Soho, London",
-        "postcode": "W1D 3QR"
+        "postcode": "W1D 3QR",
+        "image_description": "An empty pan in the middle of a work top with raw vegetables around it"
     },{
         "price": "10.00",
         "event_id": 6,
@@ -80,7 +86,8 @@
         "signup_limit": 100,
         "image_URL": "https://arounddulwich.co.uk/wp-content/uploads/2022/05/Herne-Hill-Festival-May-1080x675.jpeg",
         "firstline_address": "Regent's Park Open Air Theatre, London",
-        "postcode": "NW1 4NU"
+        "postcode": "NW1 4NU",
+        "image_description": "People sitting on the pavement watching a moving outside a train station"
     },
     {
         "price": "18.00",
@@ -94,7 +101,8 @@
         "signup_limit": 200,
         "image_URL": "https://www.verdict.co.uk/wp-content/uploads/2022/10/Shutterstock_2189990737.jpg",
         "firstline_address": "Tate Modern, Bankside, London",
-        "postcode": "SE1 9TG"
+        "postcode": "SE1 9TG",
+        "image_description": "A painting of a robot who is itself paining a painting of a robot"
     },
     {
         "price": "30.00",
@@ -108,7 +116,8 @@
         "signup_limit": 25,
         "image_URL": "https://media.istockphoto.com/id/1460761498/photo/pouring-different-wines-into-the-glasses-arranged-for-the-wine-tasting-on-the-counter.jpg?s=612x612&w=0&k=20&c=oVy-iR76yZHoqpx_Rk2TUTSjNl2rY-inoSzcXT_wp4Y=",
         "firstline_address": "The Wine House, Notting Hill, London",
-        "postcode": "W11 3LQ"
+        "postcode": "W11 3LQ",
+        "image_description": "Wine being poured into a glass with other glasses of wine of different colours"
     },
     {
         "price": "5.00",
@@ -122,7 +131,8 @@
         "signup_limit": 30,
         "image_URL": "https://bermondseystreet.london/wp-content/uploads/2022/07/open-mic-1.jpg",
         "firstline_address": "The Poetry Café, Covent Garden, London",
-        "postcode": "WC2H 9BX"
+        "postcode": "WC2H 9BX",
+        "image_description": "A microphone against a dark red background"
     },
     {
         "price": "20.00",
@@ -136,7 +146,8 @@
         "signup_limit": 150,
         "image_URL": "https://static.scientificamerican.com/sciam/cache/file/D78BCB5B-A9C5-4049-A91EE4149D222A85_source.jpg?w=600",
         "firstline_address": "TechHub London, Shoreditch",
-        "postcode": "EC2A 3AT"
+        "postcode": "EC2A 3AT",
+        "image_description": "A network with nodes and connections that has the shape of a brain"
     },
     {
         "price": "50.00",
@@ -150,6 +161,7 @@
         "signup_limit": 20,
         "image_URL": "https://agence-wato.com/wp-content/uploads/2012/01/Diner-dans-les-catacombes-interdites-Paris-underground-bunker-banquet-elegant-Agence-WATO-evenementiel.jpg",
         "firstline_address": "TechHub London, Shoreditch",
-        "postcode": "EC2A 3AT"
+        "postcode": "EC2A 3AT",
+        "image_description": "A candle lit dinner table in a tunnel with graffiti on the walls"
     }
 ]
