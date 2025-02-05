@@ -100,5 +100,11 @@
         "name": "dan",
         "email": "dan@gmail.com",
         "admin": false
+    },
+    {
+        "user_id": "103003559968467948814",
+        "name": "Lian Tattersall",
+        "email": "lianwan468@gmail.com",
+        "admin": true
     }
 ]

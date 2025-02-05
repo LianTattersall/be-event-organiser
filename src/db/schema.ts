@@ -19,6 +19,7 @@ export const events = pgTable('events', {
 		.references(() => users.user_id, { onDelete: 'cascade' }),
 	signup_limit: integer('signup_limit'),
 	image_URL: text('image_URL'),
+	image_description: text('images_description'),
 	price: numeric('price', { precision: 100, scale: 2 }),
 	postcode: text('postcode').notNull(),
 	firstline_address: text('firstline_address').notNull(),
