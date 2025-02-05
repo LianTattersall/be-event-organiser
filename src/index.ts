@@ -6,6 +6,7 @@ import { NeonDbError } from '@neondatabase/serverless';
 import events_routes from './routes/events-routes';
 import external_routes from './routes/external-routes';
 import ticketMaster_routes from './routes/ticketMaster-routes';
+import { cors } from 'hono/cors';
 
 export type Env = {
 	DATABASE_URL: string;
@@ -14,6 +15,8 @@ export type Env = {
 };
 
 const app = new Hono<{ Bindings: Env }>();
+
+app.use('/*', cors());
 
 app.get('/', (c) => {
 	return c.json({ endpoints }, 200);
