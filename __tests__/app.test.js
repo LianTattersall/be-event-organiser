@@ -131,6 +131,7 @@ describe('/events', () => {
 					signups: expect.any(Number),
 					price: expect.any(String),
 					firstline_address: expect.any(String),
+					image_description: expect.any(String),
 				});
 			});
 		});
@@ -154,6 +155,7 @@ describe('/events', () => {
 					signups: expect.any(Number),
 					price: expect.any(String),
 					firstline_address: expect.any(String),
+					image_description: expect.any(String),
 				});
 			});
 		});
@@ -231,6 +233,7 @@ describe('/events', () => {
 				signups: 5,
 				image_URL: 'https://media.timeout.com/images/106207035/750/422/image.jpg',
 				firstline_address: 'Hyde Park, Serpentine Rd, London',
+				image_description: expect.any(String),
 			});
 		});
 		test('200 - can apply multiple queries', async () => {
@@ -261,6 +264,7 @@ describe('/events', () => {
 				organiser_id: '2',
 				firstline_address: 'Hyde Park, Serpentine Rd, London',
 				postcode: 'W2 2UH',
+				image_description: 'A picture of a mathematical sculpture with spectators observing',
 			};
 			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
 			expect(response.status).toBe(201);
@@ -281,6 +285,7 @@ describe('/events', () => {
 				organiser_id: '2',
 				firstline_address: 'Hyde Park, Serpentine Rd, London',
 				postcode: 'W2 2UH',
+				image_description: 'A picture of a mathematical sculpture with spectators observing',
 			};
 			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
 			expect(response.status).toBe(400);
@@ -300,6 +305,7 @@ describe('/events', () => {
 				organiser_id: 2,
 				firstline_address: 'Hyde Park, Serpentine Rd, London',
 				postcode: 'W2 2UH',
+				image_description: 'A picture of a mathematical sculpture with spectators observing',
 			};
 			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
 			expect(response.status).toBe(400);
@@ -335,6 +341,7 @@ describe('/events', () => {
 				organiser_id: 2,
 				firstline_address: 'Hyde Park, Serpentine Rd, London',
 				postcode: 'W2 2UH',
+				image_description: 'A picture of a mathematical sculpture with spectators observing',
 			};
 
 			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
@@ -357,6 +364,7 @@ describe('/events', () => {
 				reviews: ['5 stars'],
 				firstline_address: 'Hyde Park, Serpentine Rd, London',
 				postcode: 'W2 2UH',
+				image_description: 'A picture of a mathematical sculpture with spectators observing',
 			};
 
 			const response = await app.request('/events', { method: 'POST', body: JSON.stringify(postInfo) });
@@ -376,6 +384,7 @@ describe('/events', () => {
 				event_id: expect.any(Number),
 				firstline_address: 'Hyde Park, Serpentine Rd, London',
 				postcode: 'W2 2UH',
+				image_description: 'A picture of a mathematical sculpture with spectators observing',
 			});
 		});
 		test('400 - responds with error when price has incorrect format', async () => {
@@ -425,6 +434,7 @@ describe('/events/:event_id', () => {
 				organiser_email: 'lian@gmail.com',
 				firstline_address: 'Hyde Park, Serpentine Rd, London',
 				postcode: 'W2 2UH',
+				image_description: expect.any(String),
 			});
 		});
 		test('404 - responds with an error when the event does not exist', async () => {
@@ -464,6 +474,7 @@ describe('/events/:event_id', () => {
 				image_URL: 'https://run-fest.com/wp-content/uploads/2022/08/3-1.jpg',
 				firstline_address: 'Kew Gardens',
 				postcode: 'WF45 8ET',
+				image_description: 'people running in the background with a triangular medal over it',
 			};
 			const response = await app.request('/events/1', { method: 'PATCH', body: JSON.stringify(patchInfo) });
 			expect(response.status).toBe(200);
@@ -482,6 +493,7 @@ describe('/events/:event_id', () => {
 				image_URL: 'https://run-fest.com/wp-content/uploads/2022/08/3-1.jpg',
 				firstline_address: 'Kew Gardens',
 				postcode: 'WF45 8ET',
+				image_description: 'people running in the background with a triangular medal over it',
 			});
 		});
 		test('200 - can patch with any number of fields', async () => {
@@ -503,6 +515,7 @@ describe('/events/:event_id', () => {
 				image_URL: 'https://media.timeout.com/images/106207035/750/422/image.jpg',
 				firstline_address: 'Hyde Park, Serpentine Rd, London',
 				postcode: 'W2 2UH',
+				image_description: expect.any(String),
 			});
 		});
 		test('200 - Ignores any additional fields', async () => {
@@ -524,6 +537,7 @@ describe('/events/:event_id', () => {
 				image_URL: 'https://media.timeout.com/images/106207035/750/422/image.jpg',
 				firstline_address: 'Hyde Park, Serpentine Rd, London',
 				postcode: 'W2 2UH',
+				image_description: expect.any(String),
 			});
 		});
 		test('400 - responds with an error for any incorrect data types (price)', async () => {
@@ -1164,7 +1178,7 @@ describe('/externalEvents/:user_id', () => {
 });
 
 describe('/events/:user_id/:event_id', () => {
-	describe.only('GET', () => {
+	describe('GET', () => {
 		test('204 - empty response body upon successfull deletion', async () => {
 			const response = await app.request('/externalEvents/1/1kuYvO3_GA1qo09', { method: 'DELETE' });
 			expect(response.status).toBe(204);
