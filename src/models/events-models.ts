@@ -48,6 +48,7 @@ export const fetchEvents = async (
 			signup_limit: events.signup_limit,
 			price: events.price,
 			firstline_address: events.firstline_address,
+			image_description: events.image_description,
 			signups: sql`CAST(COALESCE(COUNT(${sign_ups.user_id}), 0) AS INT)`,
 		})
 		.from(events)
@@ -111,9 +112,10 @@ interface Event {
 	image_URL: string;
 	signup_limit: number;
 	description: string;
-	organiser_id: number;
+	organiser_id: string;
 	postcode: string;
 	firstline_address: string;
+	image_description: string;
 }
 
 export const addEvent = async (connectionStr: string, eventToPost: Event) => {
@@ -131,6 +133,7 @@ export const addEvent = async (connectionStr: string, eventToPost: Event) => {
 		organiser_id,
 		postcode,
 		firstline_address,
+		image_description,
 	} = eventToPost;
 	const posted = await db
 		.insert(events)
@@ -147,6 +150,7 @@ export const addEvent = async (connectionStr: string, eventToPost: Event) => {
 				organiser_id,
 				postcode,
 				firstline_address,
+				image_description,
 			},
 		])
 		.returning();
