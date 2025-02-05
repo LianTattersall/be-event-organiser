@@ -51,3 +51,19 @@ export const removeExternalSaved = async (connectionStr: string, user_id: string
 	}
 	return deletedEvent;
 };
+
+export const fetchExternalSavedById = async (connectionStr: string, user_id: string, event_id: string) => {
+	const neon_sql = neon(connectionStr);
+	const db = drizzle(neon_sql);
+
+	const saved = await db
+		.select()
+		.from(external_saved)
+		.where(and(eq(external_saved.user_id, user_id), eq(external_saved.event_id, event_id)));
+
+	if (saved.length == 0) {
+		throw new HTTPException(404, { message: '404 - Resource not found' });
+	}
+
+	return saved;
+};

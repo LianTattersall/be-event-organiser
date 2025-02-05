@@ -4,7 +4,9 @@ import {
 	deleteSaved,
 	deleteSignup,
 	deleteUserById,
+	getSavedById,
 	getSavedByUserId,
+	getSignupById,
 	getSignupsByUserId,
 	getUserById,
 	postSavedByUserId,
@@ -29,6 +31,10 @@ users_routes.delete('/:user_id/signups/:event_id', deleteSignup);
 users_routes.get('/:user_id/saved', getSavedByUserId);
 
 users_routes.post('/:user_id/saved', postSavedByUserId);
+
+users_routes.get('/:user_id/saved/:event_id', getSavedById);
+
+users_routes.get('/:user_id/signups/:event_id', getSignupById);
 
 users_routes.delete('/:user_id/saved/:event_id', deleteSaved);
 

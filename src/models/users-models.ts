@@ -206,3 +206,35 @@ export const removeSaved = async (connectionStr: string, user_id: string, event_
 		throw new HTTPException(404, { message: '404 - Resource not found' });
 	}
 };
+
+export const fetchSavedById = async (connectionStr: string, user_id: string, event_id: number) => {
+	const neon_sql = neon(connectionStr);
+	const db = drizzle(neon_sql);
+
+	const saved = await db
+		.select()
+		.from(saved_events)
+		.where(and(eq(saved_events.user_id, user_id), eq(saved_events.event_id, event_id)));
+
+	if (saved.length == 0) {
+		throw new HTTPException(404, { message: '404 - Resource not found' });
+	}
+
+	return saved;
+};
+
+export const fetchSignupById = async (connectionStr: string, user_id: string, event_id: number) => {
+	const neon_sql = neon(connectionStr);
+	const db = drizzle(neon_sql);
+
+	const signup = await db
+		.select()
+		.from(sign_ups)
+		.where(and(eq(sign_ups.user_id, user_id), eq(sign_ups.event_id, event_id)));
+
+	if (signup.length == 0) {
+		throw new HTTPException(404, { message: '404 - Resource not found' });
+	}
+
+	return signup;
+};

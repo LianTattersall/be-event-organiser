@@ -4,7 +4,9 @@ import {
 	addSavedByUserId,
 	addSignupByUserId,
 	addUser,
+	fetchSavedById,
 	fetchSavedByUserId,
+	fetchSignupById,
 	fetchSignupsByUserId,
 	fetchUserById,
 	removeSaved,
@@ -82,4 +84,22 @@ export const deleteSaved = async (c: Context<{ Bindings: Env }>) => {
 	await removeSaved(connectionStr(c)!, user_id, Number(event_id));
 
 	return c.body(null, 204);
+};
+
+export const getSavedById = async (c: Context<{ Bindings: Env }>) => {
+	const event_id = c.req.param('event_id');
+	const user_id = c.req.param('user_id');
+
+	const saved = await fetchSavedById(connectionStr(c)!, user_id, Number(event_id));
+
+	return c.json({ saved: saved[0] });
+};
+
+export const getSignupById = async (c: Context<{ Bindings: Env }>) => {
+	const event_id = c.req.param('event_id');
+	const user_id = c.req.param('user_id');
+
+	const signup = await fetchSignupById(connectionStr(c)!, user_id, Number(event_id));
+
+	return c.json({ signup: signup[0] });
 };
