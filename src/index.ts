@@ -57,7 +57,7 @@ app.onError((err, c) => {
 		}
 	}
 	console.log(err);
-	return c.json({ message: '500 - Internal server error' }, 500);
+	return c.json({ message: '500 - Internal server error', err }, 500);
 });
 
 export default app;
