@@ -38,7 +38,14 @@ export const removeUserById = async (user_id: string, connectionStr: string) => 
 	}
 };
 
-export const fetchSignupsByUserId = async (connectionStr: string, user_id: string, limit: number, p: number, type: string) => {
+export const fetchSignupsByUserId = async (
+	connectionStr: string,
+	user_id: string,
+	limit: number,
+	p: number,
+	type: string,
+	offset: number
+) => {
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
 
@@ -69,18 +76,38 @@ export const fetchSignupsByUserId = async (connectionStr: string, user_id: strin
 		.from(events)
 		.innerJoin(sign_ups, eq(sign_ups.event_id, events.event_id))
 		.limit(limit)
-		.offset((p - 1) * limit)
+		.offset(offset ? offset : (p - 1) * limit)
 		.orderBy(asc(events.event_date))
 		.$dynamic();
 
+	const totalBuilder = db
+		.select({
+			event_id: events.event_id,
+			event_name: events.event_name,
+			event_date: events.event_date,
+			start_time: events.start_time,
+			end_time: events.end_time,
+			image_URL: events.image_URL,
+			signup_limit: events.signup_limit,
+			price: events.price,
+		})
+		.from(events)
+		.innerJoin(sign_ups, eq(sign_ups.event_id, events.event_id));
+
 	if (type == 'curr') {
-		return currSignups(signups, user_id);
+		const total = await db.select({ total: sql`CAST(COUNT(*) AS INT)` }).from(currSignups(totalBuilder.$dynamic(), user_id).as('subquery'));
+		return { signups: await currSignups(signups, user_id), total: total[0].total };
 	}
 	if (type == 'past') {
-		return pastSignups(signups, user_id);
+		const total = await db.select({ total: sql`CAST(COUNT(*) AS INT)` }).from(pastSignups(totalBuilder.$dynamic(), user_id).as('subquery'));
+		return { signups: await pastSignups(signups, user_id), total: total[0].total };
 	}
 
-	return signups.where(eq(sign_ups.user_id, user_id));
+	const total = await db
+		.select({ total: sql`CAST(COUNT(*) AS INT)` })
+		.from(totalBuilder.where(eq(sign_ups.user_id, user_id)).as('subquery'));
+
+	return { signups: await signups.where(eq(sign_ups.user_id, user_id)), total: total[0].total };
 };
 
 export const addSignupByUserId = async (connectionStr: string, user_id: string, event_id: number) => {
@@ -132,7 +159,14 @@ export const removeSignup = async (connectionStr: string, user_id: string, event
 	}
 };
 
-export const fetchSavedByUserId = async (connectionStr: string, user_id: string, limit: number, p: number, type: string) => {
+export const fetchSavedByUserId = async (
+	connectionStr: string,
+	user_id: string,
+	limit: number,
+	p: number,
+	type: string,
+	offset: number
+) => {
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
 
@@ -163,18 +197,38 @@ export const fetchSavedByUserId = async (connectionStr: string, user_id: string,
 		.from(events)
 		.innerJoin(saved_events, eq(saved_events.event_id, events.event_id))
 		.limit(limit)
-		.offset((p - 1) * limit)
+		.offset(offset ? offset : (p - 1) * limit)
 		.orderBy(asc(events.event_date))
 		.$dynamic();
 
+	const totalBuilder = db
+		.select({
+			event_id: events.event_id,
+			event_name: events.event_name,
+			event_date: events.event_date,
+			start_time: events.start_time,
+			end_time: events.end_time,
+			image_URL: events.image_URL,
+			signup_limit: events.signup_limit,
+			price: events.price,
+		})
+		.from(events)
+		.innerJoin(saved_events, eq(saved_events.event_id, events.event_id));
+
 	if (type == 'curr') {
-		return currSaved(savedEvents, user_id);
+		const total = await db.select({ total: sql`CAST(COUNT(*) AS INT)` }).from(currSaved(totalBuilder.$dynamic(), user_id).as('subquery'));
+		return { saved: await currSaved(savedEvents, user_id), total: total[0].total };
 	}
 	if (type == 'past') {
-		return pastSaved(savedEvents.$dynamic(), user_id);
+		const total = await db.select({ total: sql`CAST(COUNT(*) AS INT)` }).from(pastSaved(totalBuilder.$dynamic(), user_id).as('subquery'));
+		return { saved: await pastSaved(savedEvents, user_id), total: total[0].total };
 	}
 
-	return savedEvents.where(eq(saved_events.user_id, user_id));
+	const total = await db
+		.select({ total: sql`CAST(COUNT(*) AS INT)` })
+		.from(totalBuilder.where(eq(saved_events.user_id, user_id)).as('subquery'));
+
+	return { saved: await savedEvents.where(eq(saved_events.user_id, user_id)), total: total[0].total };
 };
 
 export const addSavedByUserId = async (connectionStr: string, user_id: string, event_id: number) => {

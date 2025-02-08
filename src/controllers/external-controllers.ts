@@ -4,9 +4,12 @@ import { addExternalSaved, fetchExternalSavedEvents, fetchExternalSavedById, rem
 import { connectionStr } from './utils';
 
 export const getExternalSavedEvents = async (c: Context<{ Bindings: Env }>) => {
-	const events = await fetchExternalSavedEvents(connectionStr(c)!, c.req.param('user_id'));
+	const limit = c.req.query('limit') || 10;
+	const offset = c.req.query('offset');
 
-	return c.json({ events });
+	const events = await fetchExternalSavedEvents(connectionStr(c)!, c.req.param('user_id'), Number(limit), Number(offset));
+
+	return c.json(events);
 };
 
 export const postExternalSaved = async (c: Context<{ Bindings: Env }>) => {

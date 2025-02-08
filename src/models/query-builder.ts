@@ -1,11 +1,11 @@
-import { and, eq, gt, lt, sql } from 'drizzle-orm';
+import { and, eq, gt, isNull, lt, or, sql } from 'drizzle-orm';
 import { PgSelect } from 'drizzle-orm/pg-core';
 import { events, saved_events, sign_ups, users } from '../db/schema';
 
 export function currentEvents<T extends PgSelect>(qb: T) {
 	const date = new Date();
 	return qb
-		.having(({ signups, signup_limit }) => gt(signup_limit, signups))
+		.having(({ signups, signup_limit }) => or(gt(signup_limit, signups), isNull(signup_limit)))
 		.where(gt(events.event_date, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`));
 }
 
@@ -16,7 +16,7 @@ export function searchResults<T extends PgSelect>(qb: T, searchTerm: string) {
 export function currentEventsAndSearch<T extends PgSelect>(qb: T, searchTerm: string) {
 	const date = new Date();
 	return qb
-		.having(({ signups, signup_limit }) => gt(signup_limit, signups))
+		.having(({ signups, signup_limit }) => or(gt(signup_limit, signups), isNull(signup_limit)))
 		.where(
 			and(
 				gt(events.event_date, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`),

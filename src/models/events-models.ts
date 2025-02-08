@@ -58,16 +58,47 @@ export const fetchEvents = async (
 		.limit(l)
 		.offset(l * (p - 1));
 
+	const totalBuilder = db
+		.select({
+			event_id: events.event_id,
+			event_name: events.event_name,
+			event_date: events.event_date,
+			start_time: events.start_time,
+			end_time: events.end_time,
+			image_URL: events.image_URL,
+			signup_limit: events.signup_limit,
+			price: events.price,
+			firstline_address: events.firstline_address,
+			image_description: events.image_description,
+			signups: sql`CAST(COALESCE(COUNT(${sign_ups.user_id}), 0) AS INT)`,
+		})
+		.from(events)
+		.leftJoin(sign_ups, eq(sign_ups.event_id, events.event_id))
+		.groupBy(events.event_id);
+
 	if (type === 'current' && searchTerm) {
-		return currentEventsAndSearch(events_data.$dynamic(), searchTerm);
+		const total = await db
+			.select({ total: sql`CAST(COUNT(*) AS INT)` })
+			.from(currentEventsAndSearch(totalBuilder.$dynamic(), searchTerm).as('subquery'));
+
+		return { events: await currentEventsAndSearch(events_data.$dynamic(), searchTerm), total: total[0].total };
 	} else if (type === 'current') {
-		return currentEvents(events_data.$dynamic());
+		const total = await db.select({ total: sql`CAST(COUNT(*) AS INT)` }).from(currentEvents(totalBuilder.$dynamic()).as('subquery'));
+
+		return { events: await currentEvents(events_data.$dynamic()), total: total[0].total };
 	}
 
 	if (searchTerm) {
-		return searchResults(events_data.$dynamic(), searchTerm);
+		const total = await db
+			.select({ total: sql`CAST(COUNT(*) AS INT)` })
+			.from(searchResults(totalBuilder.$dynamic(), searchTerm).as('subquery'));
+
+		return { events: await searchResults(events_data.$dynamic(), searchTerm), total: total[0].total };
 	}
-	return events_data;
+
+	const total = await db.select({ total: sql`CAST(COUNT(*) AS INT)` }).from(totalBuilder.as('subquery'));
+
+	return { events: await events_data, total: total[0].total };
 };
 
 export const fetchEventById = async (connectionStr: string, event_id: number) => {
@@ -179,10 +210,22 @@ export const fetchEventSignups = async (connectionStr: string, event_id: number,
 		.orderBy(users.name)
 		.$dynamic();
 
+	const totalBuilder = db
+		.select({ name: users.name, email: users.email })
+		.from(sign_ups)
+		.innerJoin(users, eq(sign_ups.user_id, users.user_id))
+		.where(eq(sign_ups.event_id, event_id));
+
 	if (searchTerm) {
-		return signedUpUserSearch(signedUpUsers, searchTerm, event_id);
+		const total = await db
+			.select({ total: sql`CAST(COUNT(*) AS INT)` })
+			.from(signedUpUserSearch(totalBuilder.$dynamic(), searchTerm, event_id).as('subquery'));
+		return { users: await signedUpUserSearch(signedUpUsers, searchTerm, event_id), total: total[0].total };
 	}
-	return signedUpUsers.where(eq(sign_ups.event_id, event_id));
+
+	const total = await db.select({ total: sql`CAST(COUNT(*) AS INT)` }).from(totalBuilder.as('subquery'));
+
+	return { users: await signedUpUsers.where(eq(sign_ups.event_id, event_id)), total: total[0].total };
 };
 
 export const fetchOrganisersEvents = async (connectionStr: string, organiser_id: any, p: number, limit: number, type: string) => {
@@ -220,20 +263,65 @@ export const fetchOrganisersEvents = async (connectionStr: string, organiser_id:
 		.offset((p - 1) * limit)
 		.$dynamic();
 
+	const totalBuilder = db
+		.select({
+			event_id: events.event_id,
+			event_name: events.event_name,
+			event_date: events.event_date,
+			start_time: events.start_time,
+			end_time: events.end_time,
+			image_URL: events.image_URL,
+			signup_limit: events.signup_limit,
+			price: events.price,
+			signups: sql`CAST(COALESCE(COUNT(${sign_ups.user_id}), 0) AS INT)`,
+		})
+		.from(events)
+		.leftJoin(sign_ups, eq(sign_ups.event_id, events.event_id))
+		.groupBy(events.event_id);
+
 	if (type == 'curr') {
 		const date = new Date();
-		return organisersEvents.where(
+		const total = await db
+			.select({ total: sql`CAST(COUNT(*) AS INT)` })
+			.from(
+				totalBuilder
+					.where(
+						and(
+							eq(events.organiser_id, organiser_id),
+							gt(events.event_date, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`)
+						)
+					)
+					.as('subquery')
+			);
+		const organisersEventsArr = await organisersEvents.where(
 			and(eq(events.organiser_id, organiser_id), gt(events.event_date, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`))
 		);
+		return { events: organisersEventsArr, total: total[0].total };
 	}
 	if (type == 'past') {
 		const date = new Date();
-		return organisersEvents.where(
+		const total = await db
+			.select({ total: sql`CAST(COUNT(*) AS INT)` })
+			.from(
+				totalBuilder
+					.where(
+						and(
+							eq(events.organiser_id, organiser_id),
+							lt(events.event_date, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`)
+						)
+					)
+					.as('subquery')
+			);
+		const organisersEventsArr = await organisersEvents.where(
 			and(eq(events.organiser_id, organiser_id), lt(events.event_date, `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`))
 		);
+		return { events: organisersEventsArr, total: total[0].total };
 	}
 
-	return organisersEvents.where(eq(events.organiser_id, organiser_id));
+	const total = await db
+		.select({ total: sql`CAST(COUNT(*) AS INT)` })
+		.from(totalBuilder.where(eq(events.organiser_id, organiser_id)).as('subquery'));
+	return { events: await organisersEvents.where(eq(events.organiser_id, organiser_id)), total: total[0].total };
 };
 
 export const updateEvent = async (connectionStr: string, event_id: number, patchInfo: any) => {

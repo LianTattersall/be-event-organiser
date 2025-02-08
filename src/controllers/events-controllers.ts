@@ -20,7 +20,7 @@ export const getEvents = async (c: Context<{ Bindings: Env }>) => {
 	const searchTerm = c.req.query('searchTerm') || '';
 
 	const events = await fetchEvents(connectionStr(c)!, limit, p, sortby, orderby, type, searchTerm);
-	return c.json({ events });
+	return c.json(events);
 };
 
 export const getEventById = async (c: Context<{ Bindings: Env }>) => {
@@ -48,7 +48,7 @@ export const getEventSignups = async (c: Context<{ Bindings: Env }>) => {
 	const p = c.req.query('p') ? Number(c.req.query('p')) : 1;
 
 	const signedUpUsers = await fetchEventSignups(connectionStr(c)!, Number(event_id), searchTerm, Number(p), Number(limit));
-	return c.json({ users: signedUpUsers });
+	return c.json(signedUpUsers);
 };
 
 export const getOrganisersEvents = async (c: Context<{ Bindings: Env }>) => {
@@ -57,7 +57,7 @@ export const getOrganisersEvents = async (c: Context<{ Bindings: Env }>) => {
 	const type = c.req.query('type') || '';
 	const user_id = c.req.param('organiser_id');
 	const events = await fetchOrganisersEvents(connectionStr(c)!, Number(user_id), Number(p), Number(limit), type);
-	return c.json({ events });
+	return c.json(events);
 };
 
 export const patchEvent = async (c: Context<{ Bindings: Env }>) => {

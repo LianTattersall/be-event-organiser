@@ -39,9 +39,10 @@ export const getSignupsByUserId = async (c: Context<{ Bindings: Env }>) => {
 	const limit = c.req.query('limit') ? Number(c.req.query('limit')) : 10;
 	const p = c.req.query('p') ? Number(c.req.query('p')) : 1;
 	const type = c.req.query('type') || '';
+	const offset = c.req.query('offset');
 
-	const signups = await fetchSignupsByUserId(connectionStr(c)!, user_id, Number(limit), Number(p), type);
-	return c.json({ signups });
+	const signups = await fetchSignupsByUserId(connectionStr(c)!, user_id, Number(limit), Number(p), type, Number(offset));
+	return c.json(signups);
 };
 
 export const postSignupByUserId = async (c: Context<{ Bindings: Env }>) => {
@@ -65,9 +66,10 @@ export const getSavedByUserId = async (c: Context<{ Bindings: Env }>) => {
 	const limit = c.req.query('limit') ? Number(c.req.query('limit')) : 10;
 	const p = c.req.query('p') ? Number(c.req.query('p')) : 1;
 	const type = c.req.query('type') || '';
+	const offset = c.req.query('offset');
 
-	const saved = await fetchSavedByUserId(connectionStr(c)!, user_id, Number(limit), Number(p), type);
-	return c.json({ saved });
+	const saved = await fetchSavedByUserId(connectionStr(c)!, user_id, Number(limit), Number(p), type, Number(offset));
+	return c.json(saved);
 };
 
 export const postSavedByUserId = async (c: Context<{ Bindings: Env }>) => {
