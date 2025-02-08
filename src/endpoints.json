@@ -16,7 +16,7 @@
     "GET /events":{
         "description": "Responds with an array of event objects",
         "queries": ["p - page number (default 1)" , "limit - number of events in array (default 10)", "type - can be 'current' or 'all'. 'current' filters out past events and events that have reached the signup limit" , "searchTerm - filters events by a searchTerm", "sortby - Can be date, price, or id", "orderby - Can be asc or desc"],
-        "exampleResponse": [{
+        "exampleResponse":{"events": [{
             "event_id": 1,
             "event_name": "Stargazing Night at Greenwich Observatory",
             "event_date": "2025-09-25",
@@ -28,7 +28,7 @@
             "firstline_address": "Royal Observatory, Greenwich, London",
             "signups": 6,
             "image_description": "people lying in seats watching the ceiling displaying the night sky"
-          }]
+          }] , "total": 13}
     },
     "GET /events/:event_id": {
         "description": "Responds with all the event info for the event with the corresponding ID",
@@ -90,15 +90,15 @@
     "GET /events/:event_id/users": {
         "description": "Responds with the users that have signed up to that event",
         "queries": ["p - page number", "limit - number of events in array" , "searchTerm - filters events by a searchTerm"],
-        "exampleResponse":  [
+        "exampleResponse":  {"users":[
             { "name": "Lian", "email": "lian@gmail.com" },
             { "name": "Hanna", "email": "Hanna@gmail.com" }
-          ]
+          ] , "total": 2}
     },
     "GET /users/:user_id/signups" : {
         "description": "Responds with an array of events that the user has signed up to",
-        "queries": ["p - page number","limit - number of events in array" , "type - can be curr (upcoming signups) or past (events that have taken place). Default returns all signups"],
-        "exampleResponse": [
+        "queries": ["p - page number","limit - number of events in array" , "type - can be curr (upcoming signups) or past (events that have taken place). Default returns all signups" , "offset - where to start fetching rows (overides p)"],
+        "exampleResponse": {"signups":[
             {
               "event_id": 1,
               "event_name": "London Marathon",
@@ -108,7 +108,7 @@
               "image_URL": "https://www.londontravelwatch.org.uk/wp-content/uploads/2023/04/London-Marathon-cropped.png",
               "signup_limit": 3000,
               "price": "10.00"
-            }]
+            }] , "total": 1}
     },
     "POST /users/:user_id/signups": {
         "description": "Posts a user_id and event_id to the signup table",
@@ -120,8 +120,8 @@
     },
     "GET /users/:user_id/saved" : {
         "description": "Responds with an array of events that the user has saved",
-        "queries": ["p - page number","limit - number of events in array" , "type - can be curr (upcoming events) or past (events that have taken place). Default returns all saved events"],
-        "exampleResponse": [
+        "queries": ["p - page number","limit - number of events in array" , "type - can be curr (upcoming events) or past (events that have taken place). Default returns all saved events" , "offset - where to start fetching rows (overides p)"],
+        "exampleResponse": {"saved":[
             {
               "event_id": 1,
               "event_name": "London Marathon",
@@ -131,7 +131,7 @@
               "image_URL": "https://www.londontravelwatch.org.uk/wp-content/uploads/2023/04/London-Marathon-cropped.png",
               "signup_limit": 3000,
               "price": "10.00"
-            }]
+            }] , "total": 1}
     },
     "POST /users/:user_id/saved": {
         "description": "Posts a user_id and event_id to the saved_events table",
@@ -144,7 +144,7 @@
     "GET /events/organiser/:organiser_id": {
         "description": "Responds with an array of events organised by the specified organiser.",
         "queries": ["p - page number (default 1)", "limit - number of events in array (default 10)", "type - can be curr (upcoming events) or past (events that have taken place). Default returns all events"],
-        "exampleResponse": [{
+        "exampleResponse": {"events":[{
             "event_id": 4,
             "event_name": "Traitors Final Screening",
             "event_date": "2025-00-24",
@@ -154,11 +154,12 @@
             "signup_limit": 100,
             "signups": 9,
             "price": "0.00"
-        }]
+        }] , "total": 1}
     },
     "GET /externalEvents/:user_id": {
         "description": "responds with an array of event id's that the user has saved from the ticket master api",
-        "exampleResponse": [{"event_id": "123lkhlkhlw"}]
+        "queries": ["limit - number of events in array (default 10)" , "offset - where to start fetching rows (overides p)"],
+        "exampleResponse": {"events":[{"event_id": "123lkhlkhlw"}] , "total": 1}
     },
     "POST /externalEvents/:user_id": {
         "description": "Posts an event_id to be saved for the specified user",
