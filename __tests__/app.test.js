@@ -118,6 +118,7 @@ describe('/events', () => {
 			const data = await response.json();
 			expect(data.events.length).toBe(10);
 			expect(data.events[0].event_id).toBe(1);
+			expect(data.total).toBe(13);
 
 			data.events.forEach((event, index) => {
 				expect(event).toEqual({
@@ -142,6 +143,7 @@ describe('/events', () => {
 			const data = await response.json();
 			expect(data.events.length).toBe(5);
 			expect(data.events[0].event_id).toBe(6);
+			expect(data.total).toBe(13);
 
 			data.events.forEach((event) => {
 				expect(event).toEqual({
@@ -172,6 +174,7 @@ describe('/events', () => {
 
 			const data = await response.json();
 			expect(data.events.length).toBe(10);
+			expect(data.total).toBe(13);
 			const timeStamps = data.events.map((event) => new Date(event.event_date).getTime());
 			expect(timeStamps).toBeSorted({ descending: true });
 		});
@@ -181,6 +184,7 @@ describe('/events', () => {
 
 			const data = await response.json();
 			expect(data.events.length).toBe(10);
+			expect(data.total).toBe(13);
 			const prices = data.events.map((event) => Number(event.price));
 			expect(prices).toBeSorted();
 		});
@@ -205,9 +209,14 @@ describe('/events', () => {
 
 			const data = await response.json();
 			expect(data.events.length).toBeGreaterThan(0);
+
+			expect(data.total).toBe(7);
+
 			data.events.forEach((event) => {
 				expect(new Date(event.event_date).getTime()).toBeGreaterThan(new Date().getTime());
-				expect(event.signup_limit).toBeGreaterThan(event.signups);
+				if (event.signup_limit != null) {
+					expect(event.signup_limit).toBeGreaterThan(event.signups);
+				}
 			});
 		});
 		test('400 - responds with an error when type query is invalid', async () => {
@@ -222,6 +231,7 @@ describe('/events', () => {
 			expect(response.status).toBe(200);
 
 			const data = await response.json();
+			expect(data.total).toBe(1);
 			expect(data.events[0]).toEqual({
 				price: '12.20',
 				event_id: 2,
@@ -243,10 +253,13 @@ describe('/events', () => {
 			const data = await response.json();
 
 			expect(data.events.length).toBeGreaterThan(0);
+			expect(data.total).toBe(2);
 			data.events.forEach((event) => {
 				expect(event.event_name).toBe('Secret Santa Exchange');
 				expect(new Date(event.event_date).getTime()).toBeGreaterThan(new Date().getTime());
-				expect(event.signup_limit).toBeGreaterThan(event.signups);
+				if (event.signup_limit != null) {
+					expect(event.signup_limit).toBeGreaterThan(event.signups);
+				}
 			});
 		});
 	});
@@ -583,6 +596,8 @@ describe('/events/:event_id/users', () => {
 
 			const data = await response.json();
 			expect(data.users.length).toBe(2);
+			expect(data.total).toBe(2);
+
 			data.users.forEach((user) => {
 				expect(user).toEqual({
 					name: expect.any(String),
@@ -595,6 +610,7 @@ describe('/events/:event_id/users', () => {
 			expect(response.status).toBe(200);
 
 			const data = await response.json();
+			expect(data.total).toBe(0);
 			expect(data.users.length).toBe(0);
 		});
 		test('400 - responds with an error when the event does not exist', async () => {
@@ -610,6 +626,7 @@ describe('/events/:event_id/users', () => {
 
 			const data = await response.json();
 			expect(data.users.length).toBe(1);
+			expect(data.total).toBe(1);
 			expect(data.users[0]).toEqual({ name: 'Hanna', email: 'Hanna@gmail.com' });
 		});
 		test('200 - can add p and limit queries', async () => {
@@ -618,6 +635,7 @@ describe('/events/:event_id/users', () => {
 
 			const data = await response.json();
 			expect(data.users.length).toBe(2);
+			expect(data.total).toBe(5);
 		});
 		test('400 - responds with an error when limit or p are not numbers', async () => {
 			const response = await app.request('/events/2/users?limit=hello&p=2');
@@ -638,6 +656,8 @@ describe('/users/:user_id/saved', () => {
 			const data = await response.json();
 
 			expect(data.saved.length).toBe(2);
+			expect(data.total).toBe(2);
+
 			data.saved.forEach((event) => {
 				expect(event).toEqual({
 					event_id: expect.any(Number),
@@ -658,6 +678,7 @@ describe('/users/:user_id/saved', () => {
 			const data = await response.json();
 
 			expect(data.saved.length).toBe(1);
+			expect(data.total).toBe(2);
 			data.saved.forEach((event) => {
 				expect(event).toEqual({
 					event_id: expect.any(Number),
@@ -690,6 +711,7 @@ describe('/users/:user_id/saved', () => {
 			expect(response.status).toBe(200);
 
 			const data = await response.json();
+			expect(data.total).toBe(0);
 			expect(data.saved.length).toBe(0);
 		});
 		test('200 - query type=curr filters signups for upcoming events', async () => {
@@ -699,6 +721,7 @@ describe('/users/:user_id/saved', () => {
 			const data = await response.json();
 
 			expect(data.saved.length).toBe(1);
+			expect(data.total).toBe(1);
 			expect(data.saved[0]).toEqual({
 				price: '12.20',
 				event_id: 2,
@@ -717,6 +740,7 @@ describe('/users/:user_id/saved', () => {
 			const data = await response.json();
 
 			expect(data.saved.length).toBe(1);
+			expect(data.total).toBe(1);
 			expect(data.saved[0]).toEqual({
 				price: '10.00',
 				event_id: 5,
@@ -734,6 +758,15 @@ describe('/users/:user_id/saved', () => {
 
 			const data = await response.json();
 			expect(data.message).toBe('400 - Invalid query for type');
+		});
+		test('200 - offset query overides p', async () => {
+			const response = await app.request('/users/4/saved?limit=1&offset=3&p=1');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+
+			expect(data.saved.length).toBe(0);
+			expect(data.total).toBe(3);
 		});
 	});
 	describe('POST', () => {
@@ -839,6 +872,7 @@ describe('/users/:user_id/signups', () => {
 			const data = await response.json();
 
 			expect(data.signups.length).toBe(4);
+			expect(data.total).toBe(4);
 			data.signups.forEach((event) => {
 				expect(event).toEqual({
 					event_id: expect.any(Number),
@@ -858,6 +892,7 @@ describe('/users/:user_id/signups', () => {
 
 			const data = await response.json();
 
+			expect(data.total).toBe(4);
 			expect(data.signups.length).toBe(1);
 			data.signups.forEach((event) => {
 				expect(event).toEqual({
@@ -891,6 +926,7 @@ describe('/users/:user_id/signups', () => {
 			expect(response.status).toBe(200);
 
 			const data = await response.json();
+			expect(data.total).toBe(0);
 			expect(data.signups.length).toBe(0);
 		});
 		test('200 - query type=curr filters signups for upcoming events', async () => {
@@ -900,6 +936,7 @@ describe('/users/:user_id/signups', () => {
 			const data = await response.json();
 
 			expect(data.signups.length).toBe(3);
+			expect(data.total).toBe(3);
 			data.signups.forEach((event) => {
 				expect(event).toEqual({
 					event_id: expect.any(Number),
@@ -921,6 +958,7 @@ describe('/users/:user_id/signups', () => {
 			const data = await response.json();
 
 			expect(data.signups.length).toBe(1);
+			expect(data.total).toBe(1);
 			expect(data.signups[0]).toEqual({
 				price: '10.90',
 				event_id: 11,
@@ -938,6 +976,15 @@ describe('/users/:user_id/signups', () => {
 
 			const data = await response.json();
 			expect(data.message).toBe('400 - Invalid query for type');
+		});
+		test('200 - offset query overides p', async () => {
+			const response = await app.request('/users/1/signups?limit=2&offset=3&p=1');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+
+			expect(data.signups.length).toBe(0);
+			expect(data.total).toBe(3);
 		});
 	});
 	describe('POST', () => {
@@ -1066,6 +1113,7 @@ describe('/events/organiser/:orgnaniser_id', () => {
 
 			const data = await response.json();
 			expect(data.events.length).toBe(4);
+			expect(data.total).toBe(4);
 			data.events.forEach((event) => {
 				expect(event).toEqual({
 					event_id: expect.any(Number),
@@ -1100,6 +1148,7 @@ describe('/events/organiser/:orgnaniser_id', () => {
 
 			const data = await response.json();
 			expect(data.events.length).toBe(1);
+			expect(data.total).toBe(4);
 			data.events.forEach((event) => {
 				expect(event).toEqual({
 					event_id: expect.any(Number),
@@ -1127,6 +1176,7 @@ describe('/events/organiser/:orgnaniser_id', () => {
 
 			const data = await response.json();
 			expect(data.events.length).toBe(3);
+			expect(data.total).toBe(3);
 			data.events.forEach((event) => {
 				expect(event).toEqual({
 					event_id: expect.any(Number),
@@ -1147,6 +1197,7 @@ describe('/events/organiser/:orgnaniser_id', () => {
 
 			const data = await response.json();
 			expect(data.events.length).toBe(1);
+			expect(data.total).toBe(1);
 			expect(data.events[0]).toEqual({
 				event_id: expect.any(Number),
 				event_name: expect.any(String),
@@ -1169,6 +1220,7 @@ describe('/externalEvents/:user_id', () => {
 			expect(response.status).toBe(200);
 
 			const data = await response.json();
+			expect(data.total).toBe(1);
 			expect(data.events.length).toBe(1);
 			expect(data.events[0]).toEqual({ event_id: '1kuYvO3_GA1qo09' });
 		});
@@ -1177,6 +1229,7 @@ describe('/externalEvents/:user_id', () => {
 			expect(response.status).toBe(200);
 
 			const data = await response.json();
+			expect(data.total).toBe(0);
 			expect(data.events).toEqual([]);
 		});
 		test('404 - responds with an error when the user does not exist', async () => {
@@ -1185,6 +1238,14 @@ describe('/externalEvents/:user_id', () => {
 
 			const data = await response.json();
 			expect(data.message).toBe('404 - User not found');
+		});
+		test('200 - limit and offset can be added as queries', async () => {
+			const response = await app.request('/externalEvents/1?limit=2&offset=1');
+			expect(response.status).toBe(200);
+
+			const data = await response.json();
+			expect(data.total).toBe(1);
+			expect(data.events.length).toBe(0);
 		});
 	});
 	describe('POST', () => {
