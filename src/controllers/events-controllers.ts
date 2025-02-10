@@ -56,7 +56,7 @@ export const getOrganisersEvents = async (c: Context<{ Bindings: Env }>) => {
 	const p = c.req.query('p') ? Number(c.req.query('p')) : 1;
 	const type = c.req.query('type') || '';
 	const user_id = c.req.param('organiser_id');
-	const events = await fetchOrganisersEvents(connectionStr(c)!, Number(user_id), Number(p), Number(limit), type);
+	const events = await fetchOrganisersEvents(connectionStr(c)!, user_id, Number(p), Number(limit), type);
 	return c.json(events);
 };
 

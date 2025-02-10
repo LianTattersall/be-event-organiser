@@ -228,7 +228,7 @@ export const fetchEventSignups = async (connectionStr: string, event_id: number,
 	return { users: await signedUpUsers.where(eq(sign_ups.event_id, event_id)), total: total[0].total };
 };
 
-export const fetchOrganisersEvents = async (connectionStr: string, organiser_id: any, p: number, limit: number, type: string) => {
+export const fetchOrganisersEvents = async (connectionStr: string, organiser_id: string, p: number, limit: number, type: string) => {
 	const neon_sql = neon(connectionStr);
 	const db = drizzle(neon_sql);
 
@@ -236,7 +236,10 @@ export const fetchOrganisersEvents = async (connectionStr: string, organiser_id:
 		throw new HTTPException(400, { message: '400 - Invalid data type for query' });
 	}
 
-	const user = await db.select().from(users).where(eq(users.user_id, organiser_id));
+	const user = await db.select().from(users).where(eq(users.user_id, '103003559968467948814'));
+	console.log(organiser_id, '103003559968467948814');
+	console.log(user);
+
 	if (user.length == 0) {
 		throw new HTTPException(404, { message: '404 - Organiser not found' });
 	}

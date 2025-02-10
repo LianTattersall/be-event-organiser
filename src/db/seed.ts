@@ -50,7 +50,7 @@ config({
 	path: '.dev.vars',
 });
 
-const sql = neon(process.env.DATABASE_URL_TEST!);
+const sql = neon(process.env.DATABASE_URL!);
 
 const db = drizzle(sql);
 
